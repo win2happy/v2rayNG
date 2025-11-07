@@ -20,6 +20,7 @@ import com.v2ray.ang.extension.serializable
 import com.v2ray.ang.extension.toastError
 import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.handler.AngConfigManager
+import com.v2ray.ang.handler.LocationManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.SpeedtestManager
@@ -215,7 +216,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val serverPort = outbound.serverPort
                 if (serverAddress != null && serverPort != null) {
                     tcpingTestScope.launch {
-                        val testResult = SpeedtestManager.tcping(serverAddress, serverPort.toInt())
+                        val testResult = SpeedtestManager.tcping(serverAddress, serverPort.toInt(), item.guid)
                         launch(Dispatchers.Main) {
                             MmkvManager.encodeServerTestDelayMillis(item.guid, testResult)
                             updateListAction.value = getPosition(item.guid)
@@ -236,7 +237,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         val serversCopy = serversCache.toList()
         viewModelScope.launch(Dispatchers.Default) {
+            // Start location fetching for all servers in parallel
             for (item in serversCopy) {
+                item.profile.let { outbound ->
+                    val serverAddress = outbound.server
+                    if (serverAddress != null) {
+                        launch {
+                            try {
+                                val locationInfo = LocationManager.getServerLocation(serverAddress)
+                                 locationInfo?.let {
+                                     MmkvManager.encodeServerLocationInfo(item.guid, it)
+                                     launch(Dispatchers.Main) {
+                                         updateListAction.value = getPosition(item.guid)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.w(AppConfig.TAG, "Failed to get location for ${item.guid}: ${e.message}")
+                            }
+                        }
+                    }
+                }
                 MessageUtil.sendMsg2TestService(getApplication(), AppConfig.MSG_MEASURE_CONFIG, item.guid)
             }
         }

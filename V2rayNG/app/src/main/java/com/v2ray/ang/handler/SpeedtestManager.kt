@@ -11,6 +11,9 @@ import com.v2ray.ang.extension.responseLength
 import com.v2ray.ang.util.HttpUtil
 import com.v2ray.ang.util.JsonUtil
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import libv2ray.Libv2ray
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -24,13 +27,30 @@ object SpeedtestManager {
 
     /**
      * Measures the TCP connection time to a given URL and port.
+     * Also fetches location information for the server.
      *
      * @param url The URL to connect to.
      * @param port The port to connect to.
+     * @param serverGuid The server GUID for storing location info (optional).
      * @return The connection time in milliseconds, or -1 if the connection failed.
      */
-    suspend fun tcping(url: String, port: Int): Long {
+    suspend fun tcping(url: String, port: Int, serverGuid: String? = null): Long {
         var time = -1L
+        
+        // Start fetching location info in parallel
+        serverGuid?.let { guid ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val locationInfo = LocationManager.getServerLocation(url)
+                    locationInfo?.let {
+                        MmkvManager.encodeServerLocationInfo(guid, it)
+                    }
+                } catch (e: Exception) {
+                    Log.w(AppConfig.TAG, "Failed to get location for $url: ${e.message}")
+                }
+            }
+        }
+         
         for (k in 0 until 2) {
             val one = socketConnectTime(url, port)
             if (!coroutineContext.isActive) {

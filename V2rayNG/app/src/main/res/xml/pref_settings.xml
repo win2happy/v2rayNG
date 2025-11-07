@@ -125,6 +125,11 @@
             android:summary="@string/summary_pref_node_num_display"
             android:title="@string/title_pref_node_num_display" />
 
+        <CheckBoxPreference
+            android:key="pref_node_location_display"
+            android:summary="@string/summary_pref_node_location_display"
+            android:title="@string/title_pref_node_location_display" />
+        
         <ListPreference
             android:defaultValue="auto"
             android:entries="@array/language_select"

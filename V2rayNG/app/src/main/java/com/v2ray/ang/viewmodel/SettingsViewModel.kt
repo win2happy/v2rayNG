@@ -81,6 +81,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             AppConfig.PREF_START_SCAN_IMMEDIATE,
             AppConfig.PREF_DOUBLE_COLUMN_DISPLAY,
             AppConfig.PREF_NODE_NUM_DISPLAY,
+            AppConfig.PREF_NODE_LOCATION_DISPLAY,
             AppConfig.SUBSCRIPTION_AUTO_UPDATE,
             AppConfig.PREF_FRAGMENT_ENABLED,
             AppConfig.PREF_MUX_ENABLED
