@@ -268,6 +268,59 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun testCurrentServerRealPing() {
         MessageUtil.sendMsg2Service(getApplication(), AppConfig.MSG_MEASURE_DELAY, "")
     }
+    
+    /**
+     * Tests the TCP ping for a single server.
+     */
+    fun testSingleTcping(guid: String) {
+        tcpingTestScope.coroutineContext[Job]?.cancelChildren()
+        SpeedtestManager.closeAllTcpSockets()
+
+        val item = serversCache.find { it.guid == guid }
+        item?.profile?.let { outbound ->
+            val serverAddress = outbound.server
+            val serverPort = outbound.serverPort
+            if (serverAddress != null && serverPort != null) {
+                tcpingTestScope.launch {
+                    val testResult = SpeedtestManager.tcping(serverAddress, serverPort.toInt(), guid)
+                    launch(Dispatchers.Main) {
+                        MmkvManager.encodeServerTestDelayMillis(guid, testResult)
+                        updateListAction.value = getPosition(guid)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Tests the real ping for a single server.
+     */
+    fun testSingleRealPing(guid: String) {
+        MessageUtil.sendMsg2TestService(getApplication(), AppConfig.MSG_MEASURE_CONFIG_CANCEL, "")
+        MmkvManager.encodeServerTestDelayMillis(guid, -1L)
+        updateListAction.value = getPosition(guid)
+
+        val item = serversCache.find { it.guid == guid }
+        item?.profile?.let { outbound ->
+            val serverAddress = outbound.server
+            if (serverAddress != null) {
+                viewModelScope.launch(Dispatchers.Default) {
+                    try {
+                        val locationInfo = LocationManager.getServerLocation(serverAddress)
+                        locationInfo?.let {
+                            MmkvManager.encodeServerLocationInfo(guid, it)
+                            launch(Dispatchers.Main) {
+                                updateListAction.value = getPosition(guid)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.w(AppConfig.TAG, "Failed to get location for ${guid}: ${e.message}")
+                    }
+                }
+                MessageUtil.sendMsg2TestService(getApplication(), AppConfig.MSG_MEASURE_CONFIG, guid)
+            }
+        }
+    }
 
     /**
      * Changes the subscription ID.

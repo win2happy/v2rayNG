@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -113,37 +114,10 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
             holder.itemMainBinding.layoutSubscription.visibility = if (subRemarks.isEmpty()) View.GONE else View.VISIBLE
 
             //layout
-            if (doubleColumnDisplay) {
-                holder.itemMainBinding.layoutShare.visibility = View.GONE
-                holder.itemMainBinding.layoutEdit.visibility = View.GONE
-                holder.itemMainBinding.layoutRemove.visibility = View.GONE
-                holder.itemMainBinding.layoutMore.visibility = View.VISIBLE
+            holder.itemMainBinding.layoutMore.visibility = View.VISIBLE
 
-                //share method
-                val shareOptions = if (isCustom) share_method_more.asList().takeLast(3) else share_method_more.asList()
-
-                holder.itemMainBinding.layoutMore.setOnClickListener {
-                    shareServer(guid, profile, position, shareOptions, if (isCustom) 2 else 0)
-                }
-            } else {
-                holder.itemMainBinding.layoutShare.visibility = View.VISIBLE
-                holder.itemMainBinding.layoutEdit.visibility = View.VISIBLE
-                holder.itemMainBinding.layoutRemove.visibility = View.VISIBLE
-                holder.itemMainBinding.layoutMore.visibility = View.GONE
-
-                //share method
-                val shareOptions = if (isCustom) share_method.asList().takeLast(1) else share_method.asList()
-
-                holder.itemMainBinding.layoutShare.setOnClickListener {
-                    shareServer(guid, profile, position, shareOptions, if (isCustom) 2 else 0)
-                }
-
-                holder.itemMainBinding.layoutEdit.setOnClickListener {
-                    editServer(guid, profile)
-                }
-                holder.itemMainBinding.layoutRemove.setOnClickListener {
-                    removeServer(guid, position)
-                }
+            holder.itemMainBinding.layoutMore.setOnClickListener {
+                showServerActionMenu(it, guid, profile, position, isCustom) 
             }
 
             holder.itemMainBinding.infoContainer.setOnClickListener {
@@ -383,5 +357,41 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
     }
 
     override fun onItemDismiss(position: Int) {
+    }
+    
+    /**
+     * Shows the server action popup menu
+     */
+    private fun showServerActionMenu(view: View, guid: String, profile: ProfileItem, position: Int, isCustom: Boolean) {
+        val popupMenu = PopupMenu(mActivity, view)
+        popupMenu.menuInflater.inflate(R.menu.menu_server_item, popupMenu.menu)
+        
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_share -> {
+                    val shareOptions = if (isCustom) share_method.asList().takeLast(1) else share_method.asList()
+                    shareServer(guid, profile, position, shareOptions, if (isCustom) 2 else 0)
+                    true
+                }
+                R.id.action_edit -> {
+                    editServer(guid, profile)
+                    true
+                }
+                R.id.action_ping_single -> {
+                    mActivity.mainViewModel.testSingleTcping(guid)
+                    true
+                }
+                R.id.action_real_ping_single -> {
+                    mActivity.mainViewModel.testSingleRealPing(guid)
+                    true
+                }
+                R.id.action_remove -> {
+                    removeServer(guid, position)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 }

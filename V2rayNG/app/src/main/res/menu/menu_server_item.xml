@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/menu_item_share"
+        android:icon="@drawable/ic_share_24dp" />
+    <item
+        android:id="@+id/action_edit"
+        android:title="@string/menu_item_edit"
+        android:icon="@drawable/ic_edit_24dp" />
+    <item
+        android:id="@+id/action_ping_single"
+        android:title="@string/title_ping_single_server"
+        android:icon="@drawable/ic_network_check_24dp" />
+    <item
+        android:id="@+id/action_real_ping_single"
+        android:title="@string/title_real_ping_single_server"
+        android:icon="@drawable/ic_network_check_24dp" />
+    <item
+        android:id="@+id/action_remove"
+        android:title="@string/menu_item_delete"
+        android:icon="@drawable/ic_delete_24dp" />
+</menu>
