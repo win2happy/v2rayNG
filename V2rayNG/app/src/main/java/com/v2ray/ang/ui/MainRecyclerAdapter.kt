@@ -67,7 +67,7 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
             holder.itemMainBinding.tvType.text = profile.configType.name
             
             //Node number display
-            val nodeNumDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_NUM_DISPLAY,, false)
+            val nodeNumDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_NUM_DISPLAY, false)
             if (nodeNumDisplay) {
                 holder.itemMainBinding.tvNodeNumber.text = "${position + 1}."
                 holder.itemMainBinding.tvNodeNumber.visibility = View.VISIBLE
