@@ -75,8 +75,24 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
                 holder.itemMainBinding.tvNodeNumber.visibility = View.GONE
             }
 
-            //TestResult
+            //TestResult and Location
             val aff = MmkvManager.decodeServerAffiliationInfo(guid)
+            
+            //Location display
+            val locationDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_LOCATION_DISPLAY, false)
+            if (locationDisplay) {
+                val locationText = aff?.getLocationDisplayString()
+                if (!locationText.isNullOrEmpty()) {
+                    holder.itemMainBinding.tvLocation.text = locationText
+                    holder.itemMainBinding.tvLocation.visibility = View.VISIBLE
+                } else {
+                    holder.itemMainBinding.tvLocation.visibility = View.GONE
+                }
+            } else {
+                holder.itemMainBinding.tvLocation.visibility = View.GONE
+            }
+             
+            //TestResult
             holder.itemMainBinding.tvTestResult.text = aff?.getTestDelayString().orEmpty()
             if ((aff?.testDelayMillis ?: 0L) < 0L) {
                 holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(mActivity, R.color.colorPingRed))

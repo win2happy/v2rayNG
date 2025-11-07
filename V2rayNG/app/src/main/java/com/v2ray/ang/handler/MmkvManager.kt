@@ -7,6 +7,7 @@ import com.v2ray.ang.dto.AssetUrlItem
 import com.v2ray.ang.dto.ProfileItem
 import com.v2ray.ang.dto.RulesetItem
 import com.v2ray.ang.dto.ServerAffiliationInfo
+import com.v2ray.ang.dto.ServerLocationInfo
 import com.v2ray.ang.dto.SubscriptionItem
 import com.v2ray.ang.util.JsonUtil
 import com.v2ray.ang.util.Utils
@@ -207,7 +208,22 @@ object MmkvManager {
         aff.testDelayMillis = testResult
         serverAffStorage.encode(guid, JsonUtil.toJson(aff))
     }
-
+    
+    /**
+     * Encodes the server location information.
+     *
+     * @param guid The server GUID.
+     * @param locationInfo The server location information.
+     */
+    fun encodeServerLocationInfo(guid: String, locationInfo: ServerLocationInfo) {
+        if (guid.isBlank()) {
+            return
+        }
+        val aff = decodeServerAffiliationInfo(guid) ?: ServerAffiliationInfo()
+        aff.locationInfo = locationInfo
+        serverAffStorage.encode(guid, JsonUtil.toJson(aff))
+    }
+     
     /**
      * Clears all test delay results.
      *

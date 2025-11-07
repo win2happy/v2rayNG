@@ -8,5 +8,10 @@ data class IPAPIInfo(
     var country: String? = null,
     var country_name: String? = null,
     var country_code: String? = null,
-    var countryCode: String? = null
+    var countryCode: String? = null,
+    var region: String? = null,
+    var regionName: String? = null,
+    var city: String? = null,
+    var loc: String? = null,
+    var timezone: String? = null
 )
