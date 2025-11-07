@@ -205,13 +205,32 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 adapter.notifyDataSetChanged()
             }
         }
-        mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
+        mainViewModel.updateTestResultAction.observe(this) { result ->
+            if (mainViewModel.isRunning.value == true) {
+                // 如果正在运行，显示测试结果和节点信息
+                val selectedGuid = MmkvManager.getSelectServer()
+                 if (!selectedGuid.isNullOrBlank()) {
+                    val config = MmkvManager.decodeServerConfig(selectedGuid)
+                    if (config != null) {
+                        val nodeInfo = getNodeDisplayInfo(config)
+                        binding.tvTestState.text = "$result\n$nodeInfo"
+                    } else {
+                        binding.tvTestState.text = result
+                    }
+                } else {
+                    binding.tvTestState.text = result
+                }
+            } else {
+                // 如果没有运行，直接显示结果
+                setTestState(result)
+            }
+        }
         mainViewModel.isRunning.observe(this) { isRunning ->
             adapter.isRunning = isRunning
             if (isRunning) {
                 binding.fab.setImageResource(R.drawable.ic_stop_24dp)
                 binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_active))
-                setTestState(getString(R.string.connection_connected))
+                setTestStateWithCurrentNode()
                 binding.layoutTest.isFocusable = true
             } else {
                 binding.fab.setImageResource(R.drawable.ic_play_24dp)
@@ -659,6 +678,31 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun setTestState(content: String?) {
         binding.tvTestState.text = content
+    }
+    
+    private fun setTestStateWithCurrentNode() {
+        val selectedGuid = MmkvManager.getSelectServer()
+        if (!selectedGuid.isNullOrBlank()) {
+            val config = MmkvManager.decodeServerConfig(selectedGuid)
+            if (config != null) {
+                val nodeInfo = getNodeDisplayInfo(config)
+                val connectedText = getString(R.string.connection_connected)
+                binding.tvTestState.text = "$connectedText\n$nodeInfo"
+            } else {
+                binding.tvTestState.text = getString(R.string.connection_connected)
+            }
+        } else {
+            binding.tvTestState.text = getString(R.string.connection_connected)
+        }
+    }
+ 
+    private fun getNodeDisplayInfo(config: com.v2ray.ang.dto.ProfileItem): String {
+        val remarks = config.remarks.takeIf { !it.isNullOrBlank() } ?: "未命名节点"
+        val server = config.server ?: "未知服务器"
+        val port = config.serverPort ?: "?"
+        val protocol = config.configType.name.uppercase()
+         
+        return "[$protocol] $remarks ($server:$port)"
     }
 
 //    val mConnection = object : ServiceConnection {
