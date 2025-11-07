@@ -222,6 +222,9 @@
 
     <string name="title_pref_double_column_display">Enable double column display</string>
     <string name="summary_pref_double_column_display">The profile list is displayed in double columns, allowing more content to be displayed on the screen. You need to restart the application to take effect.</string>
+    
+    <string name="title_pref_node_num_display">Enable node number display</string>
+    <string name="summary_pref_node_num_display">Display the node number in the profile list for easier identification and management.</string>
 
     <!-- AboutActivity -->
     <string name="title_pref_feedback">Feedback</string>

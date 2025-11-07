@@ -119,6 +119,11 @@
             android:key="pref_double_column_display"
             android:summary="@string/summary_pref_double_column_display"
             android:title="@string/title_pref_double_column_display" />
+            
+        <CheckBoxPreference
+            android:key="pref_node_num_display"
+            android:summary="@string/summary_pref_node_num_display"
+            android:title="@string/title_pref_node_num_display" />
 
         <ListPreference
             android:defaultValue="auto"
