@@ -280,6 +280,9 @@
     <string name="title_real_ping_all_server">测试当前组配置真连接</string>
     <string name="title_ping_single_server">测试此服务器 Tcping</string>
     <string name="title_real_ping_single_server">测试此服务器真连接</string>
+    <string name="menu_item_share">分享</string>
+    <string name="menu_item_edit">编辑</string>
+    <string name="menu_item_delete">删除</string>
     <string name="title_create_intelligent_selection_all_server">生成当前组智能选择配置</string>
     <string name="title_user_asset_setting">资源文件</string>
     <string name="title_sort_by_test_results">按测试结果排序</string>
