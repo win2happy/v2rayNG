@@ -276,6 +276,11 @@
     <string name="title_create_intelligent_selection_all_server">Creating Intelligent Selection Current Group Configuration</string>
     <string name="title_user_asset_setting">資源檔案</string>
     <string name="title_sort_by_test_results">依偵測結果排序</string>
+    <string name="title_ping_single_server">偵測此伺服器 Tcping</string>
+    <string name="title_real_ping_single_server">偵測此伺服器真延遲</string>
+    <string name="menu_item_share">分享</string>
+    <string name="menu_item_edit">編輯</string>
+    <string name="menu_item_delete">刪除</string>
     <string name="title_filter_config">過濾設定</string>
     <string name="filter_config_all">所有分組</string>
     <string name="title_del_duplicate_config_count">刪除 %d 個重複配置</string>

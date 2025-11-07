@@ -284,6 +284,11 @@
     <string name="title_sub_update">Update current group subscription</string>
     <string name="title_ping_all_server">Tcping current group configuration</string>
     <string name="title_real_ping_all_server">Real delay current group configuration</string>
+    <string name="title_ping_single_server">Tcping this server</string>
+    <string name="title_real_ping_single_server">Real delay this server</string>
+    <string name="menu_item_share">Share</string>
+    <string name="menu_item_edit">Edit</string>
+    <string name="menu_item_delete">Delete</string>
     <string name="title_create_intelligent_selection_all_server">Creating Intelligent Selection Current Group Configuration</string>
     <string name="title_user_asset_setting">Asset files</string>
     <string name="title_sort_by_test_results">Sorting by test results</string>
