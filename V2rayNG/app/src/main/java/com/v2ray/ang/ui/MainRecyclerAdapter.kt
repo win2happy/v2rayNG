@@ -45,7 +45,7 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
         mActivity.resources.getStringArray(R.array.share_method_more)
     }
     var isRunning = false
-    private val nodeNumDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_NUM_DISPLAY, false)
+    private val doubleColumnDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_DOUBLE_COLUMN_DISPLAY, false)
 
     /**
      * Gets the total number of items in the adapter (servers count + footer view)
