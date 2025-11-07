@@ -122,7 +122,7 @@
             
         <CheckBoxPreference
             android:key="pref_node_num_display"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:summary="@string/summary_pref_node_num_display"
             android:title="@string/title_pref_node_num_display" />
 
