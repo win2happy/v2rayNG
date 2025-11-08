@@ -98,7 +98,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.HomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme.Home" />
         <activity
             android:name=".ui.RoutingSettingActivity"
             android:exported="false" />
