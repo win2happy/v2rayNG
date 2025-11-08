@@ -318,6 +318,12 @@
 
     <string name="import_subscription_success">匯入訂閱成功</string>
     <string name="import_subscription_failure">匯入訂閱失敗</string>
+    <string name="subscription_info_format">%1$d 個節點 | 最近更新: %2$s</string>
+    <string name="subscription_never_updated">從未更新</string>
+    <string name="subscription_updated_just_now">剛剛</string>
+    <string name="subscription_updated_minutes_ago">%d 分鐘前</string>
+    <string name="subscription_updated_hours_ago">%d 小時前</string>
+    <string name="subscription_updated_days_ago">%d 天前</string>
     <string name="menu_item_add_asset">新增資源</string>
     <string name="menu_item_add_url">新增連結</string>
     <string name="title_fragment_settings">分片（Fragment） 設定</string>
