@@ -351,9 +351,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         
         // Count nodes for each subscription
+        // IMPORTANT: Read fresh data from MmkvManager instead of using cached serverList
+        val currentServerList = MmkvManager.decodeServerList()
         val nodeCounts = mutableMapOf<String, Int>()
         var totalNodes = 0
-        for (guid in serverList) {
+        
+        for (guid in currentServerList) {
             val profile = MmkvManager.decodeServerConfig(guid) ?: continue
             val subId = profile.subscriptionId
             nodeCounts[subId] = (nodeCounts[subId] ?: 0) + 1

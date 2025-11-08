@@ -14,7 +14,9 @@ import com.v2ray.ang.AppConfig
 import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ItemQrcodeBinding
 import com.v2ray.ang.databinding.ItemRecyclerSubSettingBinding
+import com.v2ray.ang.dto.SubscriptionItem
 import com.v2ray.ang.extension.toast
+import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.helper.ItemTouchHelperAdapter
@@ -129,7 +131,7 @@ class SubSettingRecyclerAdapter(val activity: SubSettingActivity) : RecyclerView
         }
     }
     
-    private fun updateSubscription(subId: String, subItem: com.v2ray.ang.dto.SubscriptionItem, position: Int) {
+    private fun updateSubscription(subId: String, subItem: SubscriptionItem, position: Int) {
         if (TextUtils.isEmpty(subItem.url)) {
             return
         }
@@ -137,7 +139,9 @@ class SubSettingRecyclerAdapter(val activity: SubSettingActivity) : RecyclerView
         mActivity.toast(R.string.title_sub_update)
         
         mActivity.lifecycleScope.launch(Dispatchers.IO) {
-            val count = com.v2ray.ang.handler.AngConfigManager.updateConfigViaSub(Pair(subId, subItem))
+            // Re-read the subscription item to ensure we have the latest data
+            val currentSubItem = MmkvManager.decodeSubscription(subId) ?: subItem
+            val count = AngConfigManager.updateConfigViaSub(Pair(subId, currentSubItem))
             kotlinx.coroutines.delay(500L)
             launch(Dispatchers.Main) {
                 if (count > 0) {
@@ -206,10 +210,12 @@ class SubSettingRecyclerAdapter(val activity: SubSettingActivity) : RecyclerView
         var count = 0
         for (guid in serverList) {
             val profile = MmkvManager.decodeServerConfig(guid) ?: continue
+            // Compare subscriptionId, handling empty strings
             if (profile.subscriptionId == subId) {
                 count++
             }
         }
+        Log.d(AppConfig.TAG, "getNodeCount for subId=$subId: count=$count")
         return count
     }
     
