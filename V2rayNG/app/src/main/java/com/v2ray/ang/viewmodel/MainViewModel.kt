@@ -335,9 +335,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Gets the subscriptions.
+     * Gets the subscriptions with node counts.
      * @param context The context.
-     * @return A pair of lists containing the subscription IDs and remarks.
+     * @return A pair of lists containing the subscription IDs and remarks(with node counts).
      */
     fun getSubscriptions(context: Context): Pair<MutableList<String>?, MutableList<String>?> {
         val subscriptions = MmkvManager.decodeSubscriptions()
@@ -349,10 +349,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (subscriptions.isEmpty()) {
             return null to null
         }
+        
+        // Count nodes for each subscription
+        val nodeCounts = mutableMapOf<String, Int>()
+        var totalNodes = 0
+        for (guid in serverList) {
+            val profile = MmkvManager.decodeServerConfig(guid) ?: continue
+            val subId = profile.subscriptionId
+            nodeCounts[subId] = (nodeCounts[subId] ?: 0) + 1
+            totalNodes++
+        }
+        
         val listId = subscriptions.map { it.first }.toMutableList()
         listId.add(0, "")
-        val listRemarks = subscriptions.map { it.second.remarks }.toMutableList()
-        listRemarks.add(0, context.getString(R.string.filter_config_all))
+        val listRemarks = subscriptions.map { 
+            val count = nodeCounts[it.first] ?: 0
+            "${it.second.remarks} ($count)"
+        }.toMutableList()
+        listRemarks.add(0, "${context.getString(R.string.filter_config_all)} ($totalNodes)")
 
         return listId to listRemarks
     }
