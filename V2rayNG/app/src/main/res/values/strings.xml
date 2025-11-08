@@ -338,6 +338,12 @@
 
     <string name="import_subscription_success">Subscription imported Successfully</string>
     <string name="import_subscription_failure">Import subscription failed</string>
+    <string name="subscription_info_format">%1$d nodes | Last updated: %2$s</string>
+    <string name="subscription_never_updated">Never</string>
+    <string name="subscription_updated_just_now">Just now</string>
+    <string name="subscription_updated_minutes_ago">%d minutes ago</string>
+    <string name="subscription_updated_hours_ago">%d hours ago</string>
+    <string name="subscription_updated_days_ago">%d days ago</string>
     <string name="title_fragment_settings">Fragment Settings</string>
     <string name="title_pref_fragment_packets">Fragment Packets</string>
     <string name="title_pref_fragment_length">Fragment Length (min-max)</string>
