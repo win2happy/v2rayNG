@@ -396,4 +396,28 @@
     </string-array>
     <string name="pre_resolving_domain">Pre-resolving domain…</string>
 
+    <!-- Home Page -->
+    <string name="home_title">主頁</string>
+    <string name="home_connection_status">連線狀態</string>
+    <string name="home_connect">連線</string>
+    <string name="home_disconnect">中斷</string>
+    <string name="home_speed_monitor">速度監控</string>
+    <string name="home_upload">上傳</string>
+    <string name="home_download">下載</string>
+    <string name="home_location_info">位置資訊</string>
+    <string name="home_loading">載入中…</string>
+    <string name="home_ip">IP 位址</string>
+    <string name="home_location">位置</string>
+    <string name="home_isp">服務商</string>
+    <string name="home_location_failed">位置資訊載入失敗</string>
+    <string name="home_node_location">節點位置</string>
+    <string name="home_recent_connections">最近連線</string>
+    <string name="home_no_recent_connections">暫無最近連線</string>
+    <string name="home_unnamed_node">未命名節點</string>
+    <string name="home_no_server_selected">請先選擇伺服器</string>
+    <string name="home_time_just_now">剛剛</string>
+    <string name="home_time_minutes_ago">%d 分鐘前</string>
+    <string name="home_time_hours_ago">%d 小時前</string>
+    <string name="home_time_days_ago">%d 天前</string>
+    
 </resources>

@@ -414,4 +414,28 @@
     </string-array>
     <string name="pre_resolving_domain">Pre-resolving domain…</string>
 
+    <!-- Home Page -->
+    <string name="home_title">Home</string>
+    <string name="home_connection_status">Connection Status</string>
+    <string name="home_connect">Connect</string>
+    <string name="home_disconnect">Disconnect</string>
+    <string name="home_speed_monitor">Speed Monitor</string>
+    <string name="home_upload">Upload</string>
+    <string name="home_download">Download</string>
+    <string name="home_location_info">Location Information</string>
+    <string name="home_loading">Loading…</string>
+    <string name="home_ip">IP Address</string>
+    <string name="home_location">Location</string>
+    <string name="home_isp">ISP</string>
+    <string name="home_location_failed">Failed to load location information</string>
+    <string name="home_node_location">Node Location</string>
+    <string name="home_recent_connections">Recent Connections</string>
+    <string name="home_no_recent_connections">No recent connections</string>
+    <string name="home_unnamed_node">Unnamed Node</string>
+    <string name="home_no_server_selected">Please select a server first</string>
+    <string name="home_time_just_now">Just now</string>
+    <string name="home_time_minutes_ago">%d min ago</string>
+    <string name="home_time_hours_ago">%d hr ago</string>
+    <string name="home_time_days_ago">%d days ago</string>
+    
 </resources>

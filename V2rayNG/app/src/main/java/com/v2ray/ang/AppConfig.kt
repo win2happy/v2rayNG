@@ -72,7 +72,8 @@ object AppConfig {
     /** Cache keys. */
     const val CACHE_SUBSCRIPTION_ID = "cache_subscription_id"
     const val CACHE_KEYWORD_FILTER = "cache_keyword_filter"
-
+    const val PREF_RECENT_CONNECTIONS = "pref_recent_connections"
+    
     /** Protocol identifiers. */
     const val PROTOCOL_FREEDOM = "freedom"
 

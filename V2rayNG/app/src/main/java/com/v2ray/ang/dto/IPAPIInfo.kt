@@ -13,5 +13,7 @@ data class IPAPIInfo(
     var regionName: String? = null,
     var city: String? = null,
     var loc: String? = null,
-    var timezone: String? = null
+    var timezone: String? = null,
+    var isp: String? = null,
+    var status: String? = null
 )

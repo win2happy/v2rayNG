@@ -402,4 +402,28 @@
     </string-array>
     <string name="pre_resolving_domain">预解析域名中…</string>
 
+    <!-- Home Page -->
+    <string name="home_title">主页</string>
+    <string name="home_connection_status">连接状态</string>
+    <string name="home_connect">连接</string>
+    <string name="home_disconnect">断开</string>
+    <string name="home_speed_monitor">速度监控</string>
+    <string name="home_upload">上传</string>
+    <string name="home_download">下载</string>
+    <string name="home_location_info">位置信息</string>
+    <string name="home_loading">加载中…</string>
+    <string name="home_ip">IP 地址</string>
+    <string name="home_location">位置</string>
+    <string name="home_isp">运营商</string>
+    <string name="home_location_failed">位置信息加载失败</string>
+    <string name="home_node_location">节点位置</string>
+    <string name="home_recent_connections">最近连接</string>
+    <string name="home_no_recent_connections">暂无最近连接</string>
+    <string name="home_unnamed_node">未命名节点</string>
+    <string name="home_no_server_selected">请先选择服务器</string>
+    <string name="home_time_just_now">刚刚</string>
+    <string name="home_time_minutes_ago">%d 分钟前</string>
+    <string name="home_time_hours_ago">%d 小时前</string>
+    <string name="home_time_days_ago">%d 天前</string>
+    
 </resources>

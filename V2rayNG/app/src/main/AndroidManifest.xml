@@ -97,6 +97,9 @@
             android:name=".ui.LogcatActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.RoutingSettingActivity"
             android:exported="false" />
         <activity
