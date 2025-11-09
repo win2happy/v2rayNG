@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
     android:clickable="true"
     android:focusable="true"
     android:background="?attr/selectableItemBackground">
@@ -17,8 +18,8 @@
 
         <ImageView
             android:id="@+id/iv_node_status"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
             android:src="@drawable/ic_circle"
             android:tint="@color/color_fab_inactive" />
 
@@ -27,9 +28,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="12dp"
             android:text="Node Name"
-            android:textSize="14sp"
+            android:textColor="@color/home_text_primary"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
@@ -40,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="1h ago"
             android:textSize="12sp"
-            android:textColor="?android:textColorSecondary" />
+            android:textColor="@color/home_text_tertiary" />
 
     </LinearLayout>
 
@@ -48,11 +50,11 @@
         android:id="@+id/tv_node_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="6dp"
         android:text="server:port"
         android:textSize="12sp"
-        android:textColor="?android:textColorSecondary"
+        android:textColor="@color/home_text_secondary"
         android:maxLines="1"
         android:ellipsize="end" />
 
@@ -60,6 +62,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
-        android:background="@color/divider_color_light" />
+        android:background="@color/home_divider" />
 
 </LinearLayout>

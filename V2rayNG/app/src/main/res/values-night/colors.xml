@@ -7,4 +7,12 @@
 
     <color name="colorPrimary">#212121</color>
     <color name="colorAccent">#FFFFFF</color>
+    
+    <!-- Home Activity Colors (Dark Theme) -->
+<color name="home_card_background">#2C2C2C</color>
+<color name="home_text_primary">#FFFFFF</color>
+<color name="home_text_secondary">#B0B0B0</color>
+<color name="home_text_tertiary">#808080</color>
+<color name="home_divider">#424242</color>
+<color name="home_page_background">#121212</color>
 </resources>

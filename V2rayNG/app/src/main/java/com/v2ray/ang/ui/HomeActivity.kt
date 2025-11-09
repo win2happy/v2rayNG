@@ -98,6 +98,10 @@ class HomeActivity : BaseActivity() {
         val mFilter = IntentFilter(AppConfig.BROADCAST_ACTION_ACTIVITY)
         ContextCompat.registerReceiver(this, mMsgReceiver, mFilter, Utils.receiverFlags())
         MessageUtil.sendMsg2Service(this, AppConfig.MSG_REGISTER_CLIENT, "")
+        
+        // Refresh connection status when returning to page
+        checkConnectionStatus()
+        updateConnectionStatus()
     }
 
     override fun onPause() {
@@ -328,27 +332,50 @@ class HomeActivity : BaseActivity() {
         
         speedMonitorJob = lifecycleScope.launch(Dispatchers.IO) {
             lastTimestamp = System.currentTimeMillis()
-            lastRxBytes = 0L
-            lastTxBytes = 0L
+            
+            // Get current config to determine outbound tags
+            val currentConfig = currentServerGuid?.let { MmkvManager.decodeServerConfig(it) }
+            val outboundTags = currentConfig?.getAllOutboundTags()?.toMutableList()
+            outboundTags?.remove(AppConfig.TAG_DIRECT)
             
             while (isRunning) {
                 try {
-                    // Try to get speed from service (if implemented)
-                    // For now, we'll use a simulated approach
                     val currentTime = System.currentTimeMillis()
                     val timeDiff = (currentTime - lastTimestamp) / 1000.0
                     
                     if (timeDiff > 0) {
-                        // In a real implementation, you would get actual traffic stats
-                        // This is a placeholder that shows 0 unless service provides data
-                        val uploadSpeed = 0L // Replace with actual calculation
-                        val downloadSpeed = 0L // Replace with actual calculation
+                        // Get real traffic stats from service
+                        var totalUpload = 0L
+                        var totalDownload = 0L
                         
+                        // Query proxy traffic
+                        outboundTags?.forEach { tag ->
+                            totalUpload += V2RayServiceManager.queryStats(tag, AppConfig.UPLINK)
+                            totalDownload += V2RayServiceManager.queryStats(tag, AppConfig.DOWNLINK)
+                        }
+                        
+                        // Calculate speed (bytes per second)
+                        val uploadSpeed = if (lastTxBytes > 0) {
+                            ((totalUpload - lastTxBytes) / timeDiff).toLong()
+                        } else {
+                            0L
+                        }
+                        
+                        val downloadSpeed = if (lastRxBytes > 0) {
+                            ((totalDownload - lastRxBytes) / timeDiff).toLong()
+                        } else {
+                            0L
+                        }
+                        
+                        // Update display
                         withContext(Dispatchers.Main) {
                             updateSpeedDisplay(uploadSpeed, downloadSpeed)
                             binding.speedChart.addData(uploadSpeed, downloadSpeed)
                         }
                         
+                        // Save current values for next calculation
+                        lastTxBytes = totalUpload
+                        lastRxBytes = totalDownload
                         lastTimestamp = currentTime
                     }
                     

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@color/home_page_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -33,22 +34,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardBackgroundColor="@color/home_card_background"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home_connection_status"
+                        android:textColor="@color/home_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="16dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -75,6 +78,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/connection_not_connected"
+                                android:textColor="@color/home_text_primary"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -83,7 +87,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=""
-                                android:textSize="12sp"
+                                android:textColor="@color/home_text_primary"
+                                android:textSize="13sp"
                                 android:layout_marginTop="4dp"
                                 android:visibility="gone" />
 
@@ -92,6 +97,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=""
+                                android:textColor="@color/home_text_primary"
                                 android:textSize="12sp"
                                 android:layout_marginTop="2dp"
                                 android:visibility="gone" />
@@ -117,22 +123,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardBackgroundColor="@color/home_card_background"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home_speed_monitor"
+                        android:textColor="@color/home_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="16dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -150,23 +158,25 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/home_upload"
-                                android:textSize="12sp" />
+                                android:textColor="@color/home_text_primary"
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/tv_upload_speed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 B/s"
+                                android:textColor="@color/color_fab_active"
                                 android:textSize="20sp"
                                 android:textStyle="bold"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="8dp" />
 
                         </LinearLayout>
 
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@color/divider_color_light" />
+                            android:background="@color/home_divider" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -179,16 +189,18 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/home_download"
-                                android:textSize="12sp" />
+                                android:textColor="@color/home_text_secondary"
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/tv_download_speed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 B/s"
+                                android:textColor="@color/colorPing"
                                 android:textSize="20sp"
                                 android:textStyle="bold"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="8dp" />
 
                         </LinearLayout>
 
@@ -198,16 +210,18 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
-                        android:layout_marginTop="12dp"
-                        app:cardCornerRadius="4dp"
+                        android:layout_marginTop="16dp"
+                        app:cardBackgroundColor="@color/home_page_background"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:strokeWidth="1dp"
-                        app:strokeColor="@color/divider_color_light">
+                        app:strokeColor="@color/home_divider">
 
                         <com.v2ray.ang.ui.SpeedChartView
                             android:id="@+id/speed_chart"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:padding="8dp"/>
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -220,22 +234,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardBackgroundColor="@color/home_card_background"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home_location_info"
+                        android:textColor="@color/home_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="16dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -247,22 +263,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/home_loading"
+                            android:textColor="@color/home_text_secondary"
                             android:textSize="14sp"
-                            android:layout_marginBottom="4dp" />
+                            android:layout_marginBottom="8dp" />
 
                         <TextView
                             android:id="@+id/tv_location_country"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
+                            android:textColor="@color/home_text_secondary"
                             android:textSize="14sp"
-                            android:layout_marginBottom="4dp" />
+                            android:layout_marginBottom="8dp" />
 
                         <TextView
                             android:id="@+id/tv_location_isp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
+                            android:textColor="@color/home_text_secondary"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -275,22 +294,24 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                app:cardBackgroundColor="@color/home_card_background"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home_recent_connections"
+                        android:textColor="@color/home_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="16dp" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_recent_connections"
@@ -304,7 +325,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/home_no_recent_connections"
                         android:textAlignment="center"
-                        android:padding="16dp"
+                        android:textColor="@color/home_text_tertiary"
+                        android:padding="24dp"
                         android:textSize="14sp"
                         android:visibility="gone" />
 

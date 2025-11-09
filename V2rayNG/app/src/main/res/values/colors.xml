@@ -12,4 +12,12 @@
 
     <color name="colorPrimary">#F5F5F5</color>
     <color name="colorAccent">#000000</color>
+    
+    <!-- Home Activity Colors -->
+    <color name="home_card_background">#FFFFFF</color>
+    <color name="home_text_primary">#212121</color>
+    <color name="home_text_secondary">#757575</color>
+    <color name="home_text_tertiary">#9E9E9E</color>
+    <color name="home_divider">#E0E0E0</color>
+    <color name="home_page_background">#F5F5F5</color>
 </resources>
