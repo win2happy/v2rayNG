@@ -15,6 +15,11 @@ import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.V2RayServiceManager
 import com.v2ray.ang.ui.MainActivity
 import com.v2ray.ang.util.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class InfoWidgetProvider : AppWidgetProvider() {
 
@@ -239,7 +244,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
      * Schedule periodic ping test (every 10 seconds)
      */
     private fun schedulePingTest(context: Context) {
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             while (V2RayServiceManager.isRunning()) {
                 val latency = com.v2ray.ang.helper.WidgetPingTester.testCurrentLatency(context)
                 
@@ -252,7 +257,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
                 context.sendBroadcast(intent)
                 
                 // Wait 10 seconds before next test
-                kotlinx.coroutines.delay(10000)
+                delay(10000)
             }
         }
     }
@@ -261,7 +266,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
      * Update ping asynchronously (for single widget)
      */
     private fun updatePingAsync(context: Context, appWidgetId: Int) {
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             val latency = com.v2ray.ang.helper.WidgetPingTester.testCurrentLatency(context)
             
             // Send broadcast to update ping
