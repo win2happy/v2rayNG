@@ -135,7 +135,6 @@ object NotificationManager {
         mBuilder = NotificationCompat.Builder(service, channelId)
             .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle(currentConfig?.remarks)
-            .setContentText("Initializing...")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
             .setShowWhen(false)
@@ -177,6 +176,18 @@ object NotificationManager {
         speedNotificationJob?.cancel()
         speedNotificationJob = null
         mNotificationManager = null
+    }
+    
+    /**
+      * Updates the notification title without recreating the entire notification.
+      * This allows speed monitoring to continue working after server switch.
+      * @param currentConfig The current profile configuration.
+    */
+    fun updateNotificationTitle(currentConfig: ProfileItem?) {
+        if (mBuilder != null) {
+            mBuilder?.setContentTitle(currentConfig?.remarks)
+            getNotificationManager()?.notify(NOTIFICATION_ID, mBuilder?.build())
+        }
     }
 
     /**

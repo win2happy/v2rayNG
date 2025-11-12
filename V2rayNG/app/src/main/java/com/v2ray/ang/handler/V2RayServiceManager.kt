@@ -431,9 +431,9 @@ object V2RayServiceManager {
             Thread.sleep(300L)
             startVService(context, guid)
              
-            // Update notification with new server name
+             // Update notification title only (keeps speed monitoring running)
             val config = MmkvManager.decodeServerConfig(guid)
-            NotificationManager.showNotification(config)
+            NotificationManager.updateNotificationTitle(config)
         }
     }
 }
