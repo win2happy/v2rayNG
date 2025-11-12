@@ -130,6 +130,11 @@
             android:summary="@string/summary_pref_node_location_display"
             android:title="@string/title_pref_node_location_display" />
         
+        <CheckBoxPreference
+            android:key="pref_node_purity_display"
+            android:summary="@string/summary_pref_node_purity_display"
+            android:title="@string/title_pref_node_purity_display" />
+            
         <ListPreference
             android:defaultValue="auto"
             android:entries="@array/language_select"

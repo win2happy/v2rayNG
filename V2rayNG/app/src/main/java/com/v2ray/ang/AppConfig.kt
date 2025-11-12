@@ -48,6 +48,7 @@ object AppConfig {
     const val PREF_DOUBLE_COLUMN_DISPLAY = "pref_double_column_display"
     const val PREF_NODE_NUM_DISPLAY = "pref_node_num_display"
     const val PREF_NODE_LOCATION_DISPLAY = "pref_node_location_display"
+    const val PREF_NODE_PURITY_DISPLAY = "pref_node_purity_display"
     const val PREF_LANGUAGE = "pref_language"
     const val PREF_UI_MODE_NIGHT = "pref_ui_mode_night"
     const val PREF_PREFER_IPV6 = "pref_prefer_ipv6"

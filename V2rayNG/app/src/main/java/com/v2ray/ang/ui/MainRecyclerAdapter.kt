@@ -92,7 +92,31 @@ class MainRecyclerAdapter(val activity: MainActivity) : RecyclerView.Adapter<Mai
             } else {
                 holder.itemMainBinding.tvLocation.visibility = View.GONE
             }
-             
+            
+            //Purity display
+            val purityDisplay = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_PURITY_DISPLAY, false)
+            if (purityDisplay) {
+                val purityText = aff?.getPurityDisplayString()
+                if (!purityText.isNullOrEmpty()) {
+                    holder.itemMainBinding.tvPurity.text = purityText
+                    holder.itemMainBinding.tvPurity.visibility = View.VISIBLE
+                    
+                    // Set color based on purity score
+                    val purityScore = aff?.purityInfo?.purityScore ?: 0
+                    val purityColor = when {
+                        purityScore >= 90 -> R.color.colorPurityExcellent
+                        purityScore >= 75 -> R.color.colorPurityGood
+                        purityScore >= 60 -> R.color.colorPurityFair
+                        else -> R.color.colorPurityPoor
+                    }
+                    holder.itemMainBinding.tvPurity.setTextColor(ContextCompat.getColor(mActivity, purityColor))
+                } else {
+                    holder.itemMainBinding.tvPurity.visibility = View.GONE
+                }
+            } else {
+                holder.itemMainBinding.tvPurity.visibility = View.GONE
+            }
+            
             //TestResult
             holder.itemMainBinding.tvTestResult.text = aff?.getTestDelayString().orEmpty()
             if ((aff?.testDelayMillis ?: 0L) < 0L) {
