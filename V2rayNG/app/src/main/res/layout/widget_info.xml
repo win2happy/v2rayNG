@@ -42,7 +42,7 @@
             android:id="@+id/widget_status_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/connection_disconnected"
+            android:text="@string/widget_status_disconnected"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
     </LinearLayout>
