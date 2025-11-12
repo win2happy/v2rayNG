@@ -423,10 +423,11 @@ object V2RayServiceManager {
     */
     private fun switchToServer(context: Context, guid: String) {
         MmkvManager.setSelectServer(guid)
-         
-        if (isRunning()) {
+        
+        val serviceCtrl = serviceControl?.get()
+        if (isRunning() && serviceCtrl != null) {
             // Restart service with new server
-            serviceControl.stopService()
+            serviceCtrl.stopService()
             Thread.sleep(300L)
             startVService(context, guid)
              
