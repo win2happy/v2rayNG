@@ -8,6 +8,7 @@ import com.v2ray.ang.dto.ProfileItem
 import com.v2ray.ang.dto.RulesetItem
 import com.v2ray.ang.dto.ServerAffiliationInfo
 import com.v2ray.ang.dto.ServerLocationInfo
+import com.v2ray.ang.dto.ServerPurityInfo
 import com.v2ray.ang.dto.SubscriptionItem
 import com.v2ray.ang.util.JsonUtil
 import com.v2ray.ang.util.Utils
@@ -221,6 +222,21 @@ object MmkvManager {
         }
         val aff = decodeServerAffiliationInfo(guid) ?: ServerAffiliationInfo()
         aff.locationInfo = locationInfo
+        serverAffStorage.encode(guid, JsonUtil.toJson(aff))
+    }
+    
+    /**
+     * Encodes the server purity information.
+     *
+     * @param guid The server GUID.
+     * @param purityInfo The server purity information.
+     */
+    fun encodeServerPurityInfo(guid: String, purityInfo: ServerPurityInfo) {
+        if (guid.isBlank()) {
+            return
+        }
+        val aff = decodeServerAffiliationInfo(guid) ?: ServerAffiliationInfo()
+        aff.purityInfo = purityInfo
         serverAffStorage.encode(guid, JsonUtil.toJson(aff))
     }
      

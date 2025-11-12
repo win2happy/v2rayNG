@@ -4,6 +4,10 @@
     <color name="colorPingRed">#FF0099</color>
     <color name="colorConfigType">#f97910</color>
     <color name="colorLocationText">#6666CC</color>
+    <color name="colorPurityExcellent">#00CC66</color>
+    <color name="colorPurityGood">#CCCC00</color>
+    <color name="colorPurityFair">#FF9933</color>
+    <color name="colorPurityPoor">#FF3333</color>
 
     <color name="color_fab_active">#f97910</color>
     <color name="color_fab_inactive">#9C9C9C</color>

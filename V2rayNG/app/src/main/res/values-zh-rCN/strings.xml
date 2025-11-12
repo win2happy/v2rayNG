@@ -222,6 +222,9 @@
     
     <string name="title_pref_node_location_display">启用节点位置显示</string>
     <string name="summary_pref_node_location_display">在连接测试时显示每个节点的地理位置信息。</string>
+    
+    <string name="title_pref_node_purity_display">启用节点纯净度显示</string>
+    <string name="summary_pref_node_purity_display">显示每个节点的纯净度评分。测试包括端口可访问性、DNS一致性、响应稳定性和连接成功率。分数越高表示节点质量越好。</string>
 
     <!-- AboutActivity -->
     <string name="title_pref_feedback">反馈</string>

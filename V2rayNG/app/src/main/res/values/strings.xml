@@ -228,6 +228,9 @@
     
     <string name="title_pref_node_location_display">Enable node location display</string>
     <string name="summary_pref_node_location_display">Display geographical location information for each node during connection testing.</string>
+    
+    <string name="title_pref_node_purity_display">Enable node purity display</string>
+    <string name="summary_pref_node_purity_display">Display purity score for each node. Tests include port accessibility, DNS consistency, response stability, and connection success rate. Higher scores indicate better quality nodes.</string>
 
     <!-- AboutActivity -->
     <string name="title_pref_feedback">Feedback</string>

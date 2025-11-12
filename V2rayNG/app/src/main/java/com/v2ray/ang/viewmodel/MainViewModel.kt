@@ -22,6 +22,7 @@ import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.LocationManager
 import com.v2ray.ang.handler.MmkvManager
+import com.v2ray.ang.handler.PurityManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.SpeedtestManager
 import com.v2ray.ang.util.MessageUtil
@@ -236,23 +237,45 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         updateListAction.value = -1
 
         val serversCopy = serversCache.toList()
+        val locationDisplayEnabled = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_LOCATION_DISPLAY, false)
+        val purityDisplayEnabled = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_PURITY_DISPLAY, false)
+        
         viewModelScope.launch(Dispatchers.Default) {
-            // Start location fetching for all servers in parallel
+            // Start location fetching and purity testing for all servers in parallel
             for (item in serversCopy) {
                 item.profile.let { outbound ->
                     val serverAddress = outbound.server
+                    val serverPort = outbound.serverPort
                     if (serverAddress != null) {
-                        launch {
-                            try {
-                                val locationInfo = LocationManager.getServerLocation(serverAddress)
-                                 locationInfo?.let {
-                                     MmkvManager.encodeServerLocationInfo(item.guid, it)
-                                     launch(Dispatchers.Main) {
-                                         updateListAction.value = getPosition(item.guid)
+                        // Only fetch location if display is enabled
+                        if (locationDisplayEnabled) {
+                            launch {
+                                try {
+                                    val locationInfo = LocationManager.getServerLocation(serverAddress)
+                                     locationInfo?.let {
+                                         MmkvManager.encodeServerLocationInfo(item.guid, it)
+                                         launch(Dispatchers.Main) {
+                                             updateListAction.value = getPosition(item.guid)
+                                        }
                                     }
+                                } catch (e: Exception) {
+                                    Log.w(AppConfig.TAG, "Failed to get location for ${item.guid}: ${e.message}")
                                 }
-                            } catch (e: Exception) {
-                                Log.w(AppConfig.TAG, "Failed to get location for ${item.guid}: ${e.message}")
+                            }
+                        }
+                        
+                        // Only test purity if display is enabled
+                        if (purityDisplayEnabled && serverPort != null) {
+                            launch {
+                                try {
+                                    val purityInfo = PurityManager.testServerPurity(serverAddress, serverPort.toInt())
+                                    MmkvManager.encodeServerPurityInfo(item.guid, purityInfo)
+                                    launch(Dispatchers.Main) {
+                                        updateListAction.value = getPosition(item.guid)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w(AppConfig.TAG, "Failed to test purity for ${item.guid}: ${e.message}")
+                                }
                             }
                         }
                     }
@@ -303,18 +326,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val item = serversCache.find { it.guid == guid }
         item?.profile?.let { outbound ->
             val serverAddress = outbound.server
+            val serverPort = outbound.serverPort
             if (serverAddress != null) {
+                val locationDisplayEnabled = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_LOCATION_DISPLAY, false)
+                val purityDisplayEnabled = MmkvManager.decodeSettingsBool(AppConfig.PREF_NODE_PURITY_DISPLAY, false)
+                
                 viewModelScope.launch(Dispatchers.Default) {
-                    try {
-                        val locationInfo = LocationManager.getServerLocation(serverAddress)
-                        locationInfo?.let {
-                            MmkvManager.encodeServerLocationInfo(guid, it)
+                    // Only fetch location if display is enabled
+                    if (locationDisplayEnabled) {
+                        try {
+                            val locationInfo = LocationManager.getServerLocation(serverAddress)
+                            locationInfo?.let {
+                                MmkvManager.encodeServerLocationInfo(guid, it)
+                                launch(Dispatchers.Main) {
+                                    updateListAction.value = getPosition(guid)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.w(AppConfig.TAG, "Failed to get location for ${guid}: ${e.message}")
+                        }
+                    }
+                    
+                    // Only test purity if display is enabled
+                    if (purityDisplayEnabled && serverPort != null) {
+                        try {
+                            val purityInfo = PurityManager.testServerPurity(serverAddress, serverPort.toInt())
+                            MmkvManager.encodeServerPurityInfo(guid, purityInfo)
                             launch(Dispatchers.Main) {
                                 updateListAction.value = getPosition(guid)
                             }
+                        } catch (e: Exception) {
+                            Log.w(AppConfig.TAG, "Failed to test purity for ${guid}: ${e.message}")
                         }
-                    } catch (e: Exception) {
-                        Log.w(AppConfig.TAG, "Failed to get location for ${guid}: ${e.message}")
                     }
                 }
                 MessageUtil.sendMsg2TestService(getApplication(), AppConfig.MSG_MEASURE_CONFIG, guid)
