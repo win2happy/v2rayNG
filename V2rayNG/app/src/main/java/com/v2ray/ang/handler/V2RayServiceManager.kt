@@ -354,6 +354,16 @@ object V2RayServiceManager {
                     Thread.sleep(500L)
                     startVService(serviceControl.getService())
                 }
+                
+                 AppConfig.MSG_STATE_SWITCH_NEXT -> {
+                     Log.i(AppConfig.TAG, "Switch to Next Server")
+                     switchToNextServer(serviceControl.getService())
+                 }
+ 
+                AppConfig.MSG_STATE_SWITCH_PREV -> {
+                    Log.i(AppConfig.TAG, "Switch to Previous Server")
+                    switchToPrevServer(serviceControl.getService())
+                }
 
                 AppConfig.MSG_MEASURE_DELAY -> {
                     measureV2rayDelay()
@@ -371,6 +381,58 @@ object V2RayServiceManager {
                     NotificationManager.startSpeedNotification(currentConfig)
                 }
             }
+        }
+    }
+    
+    /**
+      * Switch to the next server in the list
+    */
+    private fun switchToNextServer(context: Context) {
+        val serverList = MmkvManager.decodeServerList()
+        if (serverList.isEmpty()) {
+             return
+        }
+ 
+        val currentGuid = MmkvManager.getSelectServer()
+        val currentIndex = serverList.indexOf(currentGuid)
+        val nextIndex = (currentIndex + 1) % serverList.size
+        val nextGuid = serverList[nextIndex]
+ 
+        switchToServer(context, nextGuid)
+    }
+ 
+    /**
+      * Switch to the previous server in the list
+    */
+    private fun switchToPrevServer(context: Context) {
+        val serverList = MmkvManager.decodeServerList()
+        if (serverList.isEmpty()) {
+            return
+        }
+ 
+        val currentGuid = MmkvManager.getSelectServer()
+        val currentIndex = serverList.indexOf(currentGuid)
+        val prevIndex = if (currentIndex - 1 < 0) serverList.size - 1 else currentIndex - 1
+        val prevGuid = serverList[prevIndex]
+ 
+        switchToServer(context, prevGuid)
+    }
+ 
+    /**
+      * Switch to a specific server and restart the service
+    */
+    private fun switchToServer(context: Context, guid: String) {
+        MmkvManager.setSelectServer(guid)
+         
+        if (isRunning()) {
+            // Restart service with new server
+            serviceControl.stopService()
+            Thread.sleep(300L)
+            startVService(context, guid)
+             
+            // Update notification with new server name
+            val config = MmkvManager.decodeServerConfig(guid)
+            NotificationManager.showNotification(config)
         }
     }
 }

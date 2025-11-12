@@ -111,17 +111,17 @@ object NotificationManager {
         restartV2RayIntent.putExtra("key", AppConfig.MSG_STATE_RESTART)
         val restartV2RayPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_RESTART_V2RAY, restartV2RayIntent, flags)
         
-        // Switch to next server intent
-        val switchNextIntent = Intent(service, com.v2ray.ang.ui.QuickSwitchActivity::class.java)
-        switchNextIntent.putExtra(com.v2ray.ang.ui.QuickSwitchActivity.EXTRA_ACTION, com.v2ray.ang.ui.QuickSwitchActivity.ACTION_SWITCH_NEXT)
-        switchNextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        val switchNextPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_PENDING_INTENT_SWITCH_NEXT, switchNextIntent, flags)
-
-        // Switch to previous server intent
-        val switchPrevIntent = Intent(service, com.v2ray.ang.ui.QuickSwitchActivity::class.java)
-        switchPrevIntent.putExtra(com.v2ray.ang.ui.QuickSwitchActivity.EXTRA_ACTION, com.v2ray.ang.ui.QuickSwitchActivity.ACTION_SWITCH_PREV)
-        switchPrevIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        val switchPrevPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_PENDING_INTENT_SWITCH_PREV, switchPrevIntent, flags)
+        // Switch to next server intent - use broadcast instead of activity
+        val switchNextIntent = Intent(AppConfig.BROADCAST_ACTION_SERVICE)
+        switchNextIntent.`package` = AppConfig.ANG_PACKAGE
+        switchNextIntent.putExtra("key", AppConfig.MSG_STATE_SWITCH_NEXT)
+        val switchNextPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_SWITCH_NEXT, switchNextIntent, flags)
+ 
+        // Switch to previous server intent - use broadcast instead of activity
+        val switchPrevIntent = Intent(AppConfig.BROADCAST_ACTION_SERVICE)
+        switchPrevIntent.`package` = AppConfig.ANG_PACKAGE
+        switchPrevIntent.putExtra("key", AppConfig.MSG_STATE_SWITCH_PREV)
+        val switchPrevPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_SWITCH_PREV, switchPrevIntent, flags)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -135,6 +135,7 @@ object NotificationManager {
         mBuilder = NotificationCompat.Builder(service, channelId)
             .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle(currentConfig?.remarks)
+            .setContentText("Initializing...")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
             .setShowWhen(false)
