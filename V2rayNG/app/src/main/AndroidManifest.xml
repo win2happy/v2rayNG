@@ -209,8 +209,7 @@
         <receiver
             android:name=".receiver.InfoWidgetProvider"
             android:exported="true"
-            android:label="@string/widget_info_description"
-            android:process=":RunSoLibV2RayDaemon">
+            android:label="@string/widget_info_description">
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_info_provider" />

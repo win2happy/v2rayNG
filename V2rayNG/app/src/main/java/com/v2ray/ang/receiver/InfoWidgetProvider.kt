@@ -100,6 +100,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ) {
+        try {
         val views = RemoteViews(context.packageName, R.layout.widget_info)
         
         // Get current service state
@@ -140,6 +141,21 @@ class InfoWidgetProvider : AppWidgetProvider() {
         
         // Update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error updating widget: ${e.message}", e)
+            // Create a minimal fallback view to prevent widget from showing error
+            try {
+                val fallbackViews = RemoteViews(context.packageName, R.layout.widget_info)
+                fallbackViews.setTextViewText(R.id.widget_server_name, "Error: ${e.message?.take(30) ?: "Unknown"}")
+                fallbackViews.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
+                fallbackViews.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
+                fallbackViews.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFFFF0000.toInt())
+                setupClickListeners(context, fallbackViews)
+                appWidgetManager.updateAppWidget(appWidgetId, fallbackViews)
+            } catch (e2: Exception) {
+                android.util.Log.e("InfoWidgetProvider", "Error creating fallback view: ${e2.message}", e2)
+            }
+        }
     }
 
     private fun setupClickListeners(context: Context, views: RemoteViews) {
@@ -235,9 +251,14 @@ class InfoWidgetProvider : AppWidgetProvider() {
     }
 
     private fun getServerName(): String {
-        val guid = MmkvManager.getSelectServer() ?: return ""
-        val config = MmkvManager.decodeServerConfig(guid) ?: return ""
-        return config.remarks
+        return try {
+            val guid = MmkvManager.getSelectServer() ?: return ""
+            val config = MmkvManager.decodeServerConfig(guid) ?: return ""
+            config.remarks
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
     }
 
     /**
