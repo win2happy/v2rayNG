@@ -103,13 +103,13 @@ class InfoWidgetProvider : AppWidgetProvider() {
         
         // Update status
         if (isRunning) {
-            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.connection_connected))
+            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_connected))
             views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
             views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF4CAF50.toInt())
             views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_stop_24dp)
             views.setInt(R.id.widget_traffic_layout, "setVisibility", View.VISIBLE)
         } else {
-            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.connection_disconnected))
+            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
             views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
             views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF9E9E9E.toInt())
             views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_play_24dp)

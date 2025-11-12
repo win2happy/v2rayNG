@@ -426,8 +426,8 @@
     <string name="widget_toggle_connection">Toggle Connection</string>
     <string name="widget_open_app">Open App</string>
     <string name="widget_switched_to">Switched to</string>
-    <string name="connection_connected">Connected</string>
-    <string name="connection_disconnected">Disconnected</string>
+    <string name="widget_status_connected">Connected</string>
+    <string name="widget_status_disconnected">Disconnected</string>
 
     <!-- Notification Actions -->
     <string name="notification_action_switch_next">Next</string>
