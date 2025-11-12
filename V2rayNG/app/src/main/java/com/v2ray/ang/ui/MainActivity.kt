@@ -302,6 +302,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     public override fun onResume() {
         super.onResume()
         mainViewModel.reloadServerList()
+        
+        // Update app shortcuts
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            com.v2ray.ang.helper.AppShortcutsManager.updateShortcuts(this)
+        }
     }
 
     public override fun onPause() {

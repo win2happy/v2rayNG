@@ -30,6 +30,8 @@ object NotificationManager {
     private const val NOTIFICATION_PENDING_INTENT_CONTENT = 0
     private const val NOTIFICATION_PENDING_INTENT_STOP_V2RAY = 1
     private const val NOTIFICATION_PENDING_INTENT_RESTART_V2RAY = 2
+    private const val NOTIFICATION_PENDING_INTENT_SWITCH_NEXT = 3
+    private const val NOTIFICATION_PENDING_INTENT_SWITCH_PREV = 4
     private const val NOTIFICATION_ICON_THRESHOLD = 3000
 
     private var lastQueryTime = 0L
@@ -108,6 +110,18 @@ object NotificationManager {
         restartV2RayIntent.`package` = AppConfig.ANG_PACKAGE
         restartV2RayIntent.putExtra("key", AppConfig.MSG_STATE_RESTART)
         val restartV2RayPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_RESTART_V2RAY, restartV2RayIntent, flags)
+        
+        // Switch to next server intent
+        val switchNextIntent = Intent(service, com.v2ray.ang.ui.QuickSwitchActivity::class.java)
+        switchNextIntent.putExtra(com.v2ray.ang.ui.QuickSwitchActivity.EXTRA_ACTION, com.v2ray.ang.ui.QuickSwitchActivity.ACTION_SWITCH_NEXT)
+        switchNextIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val switchNextPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_PENDING_INTENT_SWITCH_NEXT, switchNextIntent, flags)
+
+        // Switch to previous server intent
+        val switchPrevIntent = Intent(service, com.v2ray.ang.ui.QuickSwitchActivity::class.java)
+        switchPrevIntent.putExtra(com.v2ray.ang.ui.QuickSwitchActivity.EXTRA_ACTION, com.v2ray.ang.ui.QuickSwitchActivity.ACTION_SWITCH_PREV)
+        switchPrevIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val switchPrevPendingIntent = PendingIntent.getActivity(service, NOTIFICATION_PENDING_INTENT_SWITCH_PREV, switchPrevIntent, flags)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -127,14 +141,19 @@ object NotificationManager {
             .setOnlyAlertOnce(true)
             .setContentIntent(contentPendingIntent)
             .addAction(
+                R.drawable.ic_swap_24dp,
+                service.getString(R.string.notification_action_switch_prev),
+                switchPrevPendingIntent
+            )
+            .addAction(
                 R.drawable.ic_delete_24dp,
                 service.getString(R.string.notification_action_stop_v2ray),
                 stopV2RayPendingIntent
             )
             .addAction(
-                R.drawable.ic_delete_24dp,
-                service.getString(R.string.title_service_restart),
-                restartV2RayPendingIntent
+                R.drawable.ic_swap_24dp,
+                service.getString(R.string.notification_action_switch_next),
+                switchNextPendingIntent
             )
 
         //mBuilder?.setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
@@ -208,7 +227,24 @@ object NotificationManager {
             mBuilder?.setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             mBuilder?.setContentText(contentText)
             getNotificationManager()?.notify(NOTIFICATION_ID, mBuilder?.build())
+        
+            // Update widget with traffic data
+            updateWidgetTraffic(proxyTraffic, directTraffic)
         }
+    }
+    
+    /**
+     * Updates the widget with traffic data.
+     */
+    private fun updateWidgetTraffic(proxyTraffic: Long, directTraffic: Long) {
+        val service = getService() ?: return
+        val intent = Intent(service, com.v2ray.ang.receiver.InfoWidgetProvider::class.java)
+        intent.action = com.v2ray.ang.receiver.InfoWidgetProvider.ACTION_UPDATE_TRAFFIC
+        intent.putExtra("uploadSpeed", proxyTraffic)
+        intent.putExtra("downloadSpeed", directTraffic)
+        intent.putExtra("uploadTotal", proxyTraffic)
+        intent.putExtra("downloadTotal", directTraffic)
+        service.sendBroadcast(intent)
     }
 
     /**
