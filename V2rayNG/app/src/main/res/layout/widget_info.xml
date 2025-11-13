@@ -200,8 +200,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/widget_switch_server"
             android:padding="8dp"
-            android:src="@drawable/ic_swap_24dp"
-            android:tint="@android:color/white" />
+            android:src="@drawable/ic_swap_24dp" />
 
         <ImageButton
             android:id="@+id/widget_btn_toggle"
@@ -212,8 +211,7 @@
             android:background="@drawable/widget_button_background"
             android:contentDescription="@string/widget_toggle_connection"
             android:padding="12dp"
-            android:src="@drawable/ic_play_24dp"
-            android:tint="@android:color/white" />
+            android:src="@drawable/ic_play_24dp" />
 
         <ImageButton
             android:id="@+id/widget_btn_open_app"
@@ -222,8 +220,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/widget_open_app"
             android:padding="8dp"
-            android:src="@drawable/ic_open_in_new_24dp"
-            android:tint="@android:color/white" />
+            android:src="@drawable/ic_open_in_new_24dp" />
     </LinearLayout>
 
 </LinearLayout>

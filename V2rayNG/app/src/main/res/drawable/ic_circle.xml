@@ -1,7 +1,9 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/divider_color_light" />
-    <size
-        android:width="48dp"
-        android:height="48dp" />
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="12dp"
+    android:viewportWidth="12"
+    android:viewportHeight="12">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,6m-6,0a6,6 0 1,0 12,0a6,6 0 1,0 -12,0" />
+</vector>

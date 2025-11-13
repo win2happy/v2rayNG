@@ -72,26 +72,30 @@ class InfoWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         
-        when (intent.action) {
-            ACTION_TOGGLE_CONNECTION -> {
-                handleToggleConnection(context)
+        try {
+            when (intent.action) {
+                ACTION_TOGGLE_CONNECTION -> {
+                    handleToggleConnection(context)
+                }
+                ACTION_SWITCH_SERVER -> {
+                    handleSwitchServer(context)
+                }
+                ACTION_OPEN_APP -> {
+                    handleOpenApp(context)
+                }
+                ACTION_UPDATE_TRAFFIC -> {
+                    handleUpdateTraffic(context, intent)
+                }
+                ACTION_UPDATE_PING -> {
+                    handleUpdatePing(context, intent)
+                }
+                AppConfig.BROADCAST_ACTION_ACTIVITY -> {
+                    // Update widget when service state changes
+                    updateWidget(context)
+                }
             }
-            ACTION_SWITCH_SERVER -> {
-                handleSwitchServer(context)
-            }
-            ACTION_OPEN_APP -> {
-                handleOpenApp(context)
-            }
-            ACTION_UPDATE_TRAFFIC -> {
-                handleUpdateTraffic(context, intent)
-            }
-            ACTION_UPDATE_PING -> {
-                handleUpdatePing(context, intent)
-            }
-            AppConfig.BROADCAST_ACTION_ACTIVITY -> {
-                // Update widget when service state changes
-                updateWidget(context)
-            }
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error in onReceive: ${e.message}", e)
         }
     }
 
@@ -101,46 +105,51 @@ class InfoWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int
     ) {
         try {
-        val views = RemoteViews(context.packageName, R.layout.widget_info)
+            val views = RemoteViews(context.packageName, R.layout.widget_info)
+            
+            // Get current service state
+            val isRunning = V2RayServiceManager.isRunning()
+            val serverName = getServerName()
         
-        // Get current service state
-        val isRunning = V2RayServiceManager.isRunning()
-        val serverName = getServerName()
-        
-        // Update status
-        if (isRunning) {
-            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_connected))
-            views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
-            views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF4CAF50.toInt())
-            views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_stop_24dp)
-            views.setInt(R.id.widget_traffic_layout, "setVisibility", View.VISIBLE)
-        } else {
-            views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
-            views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
-            views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF9E9E9E.toInt())
-            views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_play_24dp)
-            views.setInt(R.id.widget_traffic_layout, "setVisibility", View.GONE)
-        }
-        
-        // Update server name
-        if (serverName.isNotEmpty()) {
-            views.setTextViewText(R.id.widget_server_name, serverName)
-        } else {
-            views.setTextViewText(R.id.widget_server_name, context.getString(R.string.widget_no_server_selected))
-        }
-        
-        // Update ping if connected
-        if (isRunning) {
-            updatePingAsync(context, appWidgetId)
-        } else {
-            views.setTextViewText(R.id.widget_ping, "-- ms")
-        }
-        
-        // Set up click listeners
-        setupClickListeners(context, views)
-        
-        // Update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+            // Update status
+            if (isRunning) {
+                views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_connected))
+                views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
+                views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF4CAF50.toInt())
+                views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_stop_24dp)
+                views.setInt(R.id.widget_traffic_layout, "setVisibility", View.VISIBLE)
+                
+                // Initialize traffic display
+                views.setTextViewText(R.id.widget_upload_speed, "0 B/s")
+                views.setTextViewText(R.id.widget_download_speed, "0 B/s")
+                views.setTextViewText(R.id.widget_upload_total, "0 B")
+                views.setTextViewText(R.id.widget_download_total, "0 B")
+                views.setTextViewText(R.id.widget_ping, "-- ms")
+            } else {
+                views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
+                views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
+                views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF9E9E9E.toInt())
+                views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_play_24dp)
+                views.setInt(R.id.widget_traffic_layout, "setVisibility", View.GONE)
+            }
+            
+            // Update server name
+            if (serverName.isNotEmpty()) {
+                views.setTextViewText(R.id.widget_server_name, serverName)
+            } else {
+                views.setTextViewText(R.id.widget_server_name, context.getString(R.string.widget_no_server_selected))
+            }
+            
+            // Set up click listeners
+            setupClickListeners(context, views)
+            
+            // Update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+            
+            // Update ping asynchronously if connected
+            if (isRunning) {
+                updatePingAsync(context, appWidgetId)
+            }
         } catch (e: Exception) {
             android.util.Log.e("InfoWidgetProvider", "Error updating widget: ${e.message}", e)
             // Create a minimal fallback view to prevent widget from showing error
@@ -150,6 +159,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
                 fallbackViews.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
                 fallbackViews.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
                 fallbackViews.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFFFF0000.toInt())
+                fallbackViews.setInt(R.id.widget_traffic_layout, "setVisibility", View.GONE)
                 setupClickListeners(context, fallbackViews)
                 appWidgetManager.updateAppWidget(appWidgetId, fallbackViews)
             } catch (e2: Exception) {
@@ -159,104 +169,135 @@ class InfoWidgetProvider : AppWidgetProvider() {
     }
 
     private fun setupClickListeners(context: Context, views: RemoteViews) {
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
+        try {
+            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
 
-        // Toggle connection button
-        val toggleIntent = Intent(context, InfoWidgetProvider::class.java).apply {
-            action = ACTION_TOGGLE_CONNECTION
-        }
-        val togglePendingIntent = PendingIntent.getBroadcast(context, 0, toggleIntent, flags)
-        views.setOnClickPendingIntent(R.id.widget_btn_toggle, togglePendingIntent)
+            // Toggle connection button
+            val toggleIntent = Intent(context, InfoWidgetProvider::class.java).apply {
+                action = ACTION_TOGGLE_CONNECTION
+            }
+            val togglePendingIntent = PendingIntent.getBroadcast(context, 0, toggleIntent, flags)
+            views.setOnClickPendingIntent(R.id.widget_btn_toggle, togglePendingIntent)
 
-        // Switch server button
-        val switchIntent = Intent(context, InfoWidgetProvider::class.java).apply {
-            action = ACTION_SWITCH_SERVER
-        }
-        val switchPendingIntent = PendingIntent.getBroadcast(context, 1, switchIntent, flags)
-        views.setOnClickPendingIntent(R.id.widget_btn_switch, switchPendingIntent)
+            // Switch server button
+            val switchIntent = Intent(context, InfoWidgetProvider::class.java).apply {
+                action = ACTION_SWITCH_SERVER
+            }
+            val switchPendingIntent = PendingIntent.getBroadcast(context, 1, switchIntent, flags)
+            views.setOnClickPendingIntent(R.id.widget_btn_switch, switchPendingIntent)
 
-        // Open app button
-        val openIntent = Intent(context, InfoWidgetProvider::class.java).apply {
-            action = ACTION_OPEN_APP
+            // Open app button
+            val openIntent = Intent(context, InfoWidgetProvider::class.java).apply {
+                action = ACTION_OPEN_APP
+            }
+            val openPendingIntent = PendingIntent.getBroadcast(context, 2, openIntent, flags)
+            views.setOnClickPendingIntent(R.id.widget_btn_open_app, openPendingIntent)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error setting up click listeners: ${e.message}", e)
         }
-        val openPendingIntent = PendingIntent.getBroadcast(context, 2, openIntent, flags)
-        views.setOnClickPendingIntent(R.id.widget_btn_open_app, openPendingIntent)
     }
 
     private fun handleToggleConnection(context: Context) {
-        if (V2RayServiceManager.isRunning()) {
-            V2RayServiceManager.stopVService(context)
-        } else {
-            V2RayServiceManager.startVServiceFromToggle(context)
+        try {
+            if (V2RayServiceManager.isRunning()) {
+                V2RayServiceManager.stopVService(context)
+            } else {
+                V2RayServiceManager.startVServiceFromToggle(context)
+            }
+            updateWidget(context)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error toggling connection: ${e.message}", e)
         }
-        updateWidget(context)
     }
 
     private fun handleSwitchServer(context: Context) {
-        val serverList = MmkvManager.decodeServerList()
-        if (serverList.isEmpty()) {
-            return
-        }
+        try {
+            val serverList = MmkvManager.decodeServerList()
+            if (serverList.isEmpty()) {
+                android.util.Log.w("InfoWidgetProvider", "Server list is empty, cannot switch")
+                return
+            }
 
-        val currentGuid = MmkvManager.getSelectServer()
-        val currentIndex = serverList.indexOf(currentGuid)
-        val nextIndex = (currentIndex + 1) % serverList.size
-        val nextGuid = serverList[nextIndex]
+            val currentGuid = MmkvManager.getSelectServer()
+            val currentIndex = serverList.indexOf(currentGuid)
+            val nextIndex = (currentIndex + 1) % serverList.size
+            val nextGuid = serverList[nextIndex]
 
-        MmkvManager.setSelectServer(nextGuid)
-        
-        if (V2RayServiceManager.isRunning()) {
-            V2RayServiceManager.startVService(context, nextGuid)
+            MmkvManager.setSelectServer(nextGuid)
+            
+            if (V2RayServiceManager.isRunning()) {
+                V2RayServiceManager.startVService(context, nextGuid)
+            }
+            
+            updateWidget(context)
+            
+            // Show toast
+            val serverName = getServerName()
+            if (serverName.isNotEmpty()) {
+                context.toast("${context.getString(R.string.widget_switched_to)}: $serverName")
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error switching server: ${e.message}", e)
         }
-        
-        updateWidget(context)
-        
-        // Show toast
-        val serverName = getServerName()
-        context.toast("${context.getString(R.string.widget_switched_to)}: $serverName")
     }
 
     private fun handleOpenApp(context: Context) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        try {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error opening app: ${e.message}", e)
         }
-        context.startActivity(intent)
     }
 
     private fun handleUpdateTraffic(context: Context, intent: Intent) {
-        val uploadSpeed = intent.getLongExtra("uploadSpeed", 0L)
-        val downloadSpeed = intent.getLongExtra("downloadSpeed", 0L)
-        val uploadTotal = intent.getLongExtra("uploadTotal", 0L)
-        val downloadTotal = intent.getLongExtra("downloadTotal", 0L)
+        try {
+            val uploadSpeed = intent.getLongExtra("uploadSpeed", 0L)
+            val downloadSpeed = intent.getLongExtra("downloadSpeed", 0L)
+            val uploadTotal = intent.getLongExtra("uploadTotal", 0L)
+            val downloadTotal = intent.getLongExtra("downloadTotal", 0L)
 
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val appWidgetIds = appWidgetManager.getAppWidgetIds(
-            ComponentName(context, InfoWidgetProvider::class.java)
-        )
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                ComponentName(context, InfoWidgetProvider::class.java)
+            )
 
-        for (appWidgetId in appWidgetIds) {
-            val views = RemoteViews(context.packageName, R.layout.widget_info)
-            
-            views.setTextViewText(R.id.widget_upload_speed, Utils.humanReadableByteCount(uploadSpeed, true) + "/s")
-            views.setTextViewText(R.id.widget_download_speed, Utils.humanReadableByteCount(downloadSpeed, true) + "/s")
-            views.setTextViewText(R.id.widget_upload_total, Utils.humanReadableByteCount(uploadTotal, false))
-            views.setTextViewText(R.id.widget_download_total, Utils.humanReadableByteCount(downloadTotal, false))
-            
-            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+            for (appWidgetId in appWidgetIds) {
+                val views = RemoteViews(context.packageName, R.layout.widget_info)
+                
+                views.setTextViewText(R.id.widget_upload_speed, Utils.humanReadableByteCount(uploadSpeed, true) + "/s")
+                views.setTextViewText(R.id.widget_download_speed, Utils.humanReadableByteCount(downloadSpeed, true) + "/s")
+                views.setTextViewText(R.id.widget_upload_total, Utils.humanReadableByteCount(uploadTotal, false))
+                views.setTextViewText(R.id.widget_download_total, Utils.humanReadableByteCount(downloadTotal, false))
+                
+                appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error updating traffic: ${e.message}", e)
         }
     }
 
     private fun getServerName(): String {
         return try {
-            val guid = MmkvManager.getSelectServer() ?: return ""
-            val config = MmkvManager.decodeServerConfig(guid) ?: return ""
-            config.remarks
+            val guid = MmkvManager.getSelectServer()
+            if (guid.isNullOrEmpty()) {
+                android.util.Log.d("InfoWidgetProvider", "No server GUID selected")
+                return ""
+            }
+            val config = MmkvManager.decodeServerConfig(guid)
+            if (config == null) {
+                android.util.Log.w("InfoWidgetProvider", "Failed to decode server config for GUID: $guid")
+                return ""
+            }
+            config.remarks ?: ""
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("InfoWidgetProvider", "Error getting server name: ${e.message}", e)
             ""
         }
     }
@@ -265,7 +306,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
      * Schedule periodic ping test (every 10 seconds)
      */
     private fun schedulePingTest(context: Context) {
-        GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             while (V2RayServiceManager.isRunning()) {
                 val latency = com.v2ray.ang.helper.WidgetPingTester.testCurrentLatency(context)
                 
@@ -287,7 +328,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
      * Update ping asynchronously (for single widget)
      */
     private fun updatePingAsync(context: Context, appWidgetId: Int) {
-        GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             val latency = com.v2ray.ang.helper.WidgetPingTester.testCurrentLatency(context)
             
             // Send broadcast to update ping
@@ -304,23 +345,27 @@ class InfoWidgetProvider : AppWidgetProvider() {
      * Handle ping update
      */
     private fun handleUpdatePing(context: Context, intent: Intent) {
-        val latency = intent.getLongExtra("latency", -1L)
-        val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-        
-        if (appWidgetId == -1) {
-            // Update all widgets
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName(context, InfoWidgetProvider::class.java)
-            )
+        try {
+            val latency = intent.getLongExtra("latency", -1L)
+            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
             
-            for (widgetId in appWidgetIds) {
-                updatePingDisplay(context, appWidgetManager, widgetId, latency)
+            if (appWidgetId == -1) {
+                // Update all widgets
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    ComponentName(context, InfoWidgetProvider::class.java)
+                )
+                
+                for (widgetId in appWidgetIds) {
+                    updatePingDisplay(context, appWidgetManager, widgetId, latency)
+                }
+            } else {
+                // Update specific widget
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                updatePingDisplay(context, appWidgetManager, appWidgetId, latency)
             }
-        } else {
-            // Update specific widget
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            updatePingDisplay(context, appWidgetManager, appWidgetId, latency)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error updating ping: ${e.message}", e)
         }
     }
 
@@ -333,23 +378,27 @@ class InfoWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int,
         latency: Long
     ) {
-        val views = RemoteViews(context.packageName, R.layout.widget_info)
-        
-        // Format and set ping text
-        val pingText = com.v2ray.ang.helper.WidgetPingTester.formatLatency(latency)
-        views.setTextViewText(R.id.widget_ping, pingText)
-        
-        // Set color based on latency level
-        val color = when (com.v2ray.ang.helper.WidgetPingTester.getLatencyLevel(latency)) {
-            1 -> 0xFF4CAF50.toInt()  // Excellent - Green
-            2 -> 0xFF8BC34A.toInt()  // Good - Light Green
-            3 -> 0xFFFF9800.toInt()  // Fair - Orange
-            4 -> 0xFFF44336.toInt()  // Poor - Red
-            else -> 0xFFFFFFFF.toInt() // Unknown - White
+        try {
+            val views = RemoteViews(context.packageName, R.layout.widget_info)
+            
+            // Format and set ping text
+            val pingText = com.v2ray.ang.helper.WidgetPingTester.formatLatency(latency)
+            views.setTextViewText(R.id.widget_ping, pingText)
+            
+            // Set color based on latency level
+            val color = when (com.v2ray.ang.helper.WidgetPingTester.getLatencyLevel(latency)) {
+                1 -> 0xFF4CAF50.toInt()  // Excellent - Green
+                2 -> 0xFF8BC34A.toInt()  // Good - Light Green
+                3 -> 0xFFFF9800.toInt()  // Fair - Orange
+                4 -> 0xFFF44336.toInt()  // Poor - Red
+                else -> 0xFFFFFFFF.toInt() // Unknown - White
+            }
+            views.setTextColor(R.id.widget_ping, color)
+            
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
+        } catch (e: Exception) {
+            android.util.Log.e("InfoWidgetProvider", "Error updating ping display: ${e.message}", e)
         }
-        views.setTextColor(R.id.widget_ping, color)
-        
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetId, views)
     }
 }
 
