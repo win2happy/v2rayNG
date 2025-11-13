@@ -105,18 +105,18 @@ class InfoWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int
     ) {
         try {
-            val views = RemoteViews(context.packageName, R.layout.widget_info)
+            // Use simple layout for better compatibility
+            val views = RemoteViews(context.packageName, R.layout.widget_info_simple)
             
             // Get current service state
             val isRunning = V2RayServiceManager.isRunning()
             val serverName = getServerName()
         
-            // Update status
+            // Update status indicator - use setInt for background color
             if (isRunning) {
                 views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_connected))
-                views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
-                views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF4CAF50.toInt())
-                views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_stop_24dp)
+                views.setInt(R.id.widget_status_indicator, "setBackgroundColor", 0xFF4CAF50.toInt())
+                views.setTextViewText(R.id.widget_btn_toggle, "■") // Stop symbol
                 views.setInt(R.id.widget_traffic_layout, "setVisibility", View.VISIBLE)
                 
                 // Initialize traffic display
@@ -127,9 +127,8 @@ class InfoWidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.widget_ping, "-- ms")
             } else {
                 views.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
-                views.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
-                views.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFF9E9E9E.toInt())
-                views.setImageViewResource(R.id.widget_btn_toggle, R.drawable.ic_play_24dp)
+                views.setInt(R.id.widget_status_indicator, "setBackgroundColor", 0xFF9E9E9E.toInt())
+                views.setTextViewText(R.id.widget_btn_toggle, "▶") // Play symbol
                 views.setInt(R.id.widget_traffic_layout, "setVisibility", View.GONE)
             }
             
@@ -152,18 +151,19 @@ class InfoWidgetProvider : AppWidgetProvider() {
             }
         } catch (e: Exception) {
             android.util.Log.e("InfoWidgetProvider", "Error updating widget: ${e.message}", e)
+            e.printStackTrace()
             // Create a minimal fallback view to prevent widget from showing error
             try {
-                val fallbackViews = RemoteViews(context.packageName, R.layout.widget_info)
-                fallbackViews.setTextViewText(R.id.widget_server_name, "Error: ${e.message?.take(30) ?: "Unknown"}")
-                fallbackViews.setTextViewText(R.id.widget_status_text, context.getString(R.string.widget_status_disconnected))
-                fallbackViews.setImageViewResource(R.id.widget_status_indicator, R.drawable.ic_circle)
-                fallbackViews.setInt(R.id.widget_status_indicator, "setColorFilter", 0xFFFF0000.toInt())
+                val fallbackViews = RemoteViews(context.packageName, R.layout.widget_info_simple)
+                fallbackViews.setTextViewText(R.id.widget_server_name, "Loading...")
+                fallbackViews.setTextViewText(R.id.widget_status_text, "Please wait")
+                fallbackViews.setInt(R.id.widget_status_indicator, "setBackgroundColor", 0xFFFF9800.toInt())
                 fallbackViews.setInt(R.id.widget_traffic_layout, "setVisibility", View.GONE)
                 setupClickListeners(context, fallbackViews)
                 appWidgetManager.updateAppWidget(appWidgetId, fallbackViews)
             } catch (e2: Exception) {
                 android.util.Log.e("InfoWidgetProvider", "Error creating fallback view: ${e2.message}", e2)
+                e2.printStackTrace()
             }
         }
     }
@@ -269,7 +269,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
             )
 
             for (appWidgetId in appWidgetIds) {
-                val views = RemoteViews(context.packageName, R.layout.widget_info)
+                val views = RemoteViews(context.packageName, R.layout.widget_info_simple)
                 
                 views.setTextViewText(R.id.widget_upload_speed, Utils.humanReadableByteCount(uploadSpeed, true) + "/s")
                 views.setTextViewText(R.id.widget_download_speed, Utils.humanReadableByteCount(downloadSpeed, true) + "/s")
@@ -379,7 +379,7 @@ class InfoWidgetProvider : AppWidgetProvider() {
         latency: Long
     ) {
         try {
-            val views = RemoteViews(context.packageName, R.layout.widget_info)
+            val views = RemoteViews(context.packageName, R.layout.widget_info_simple)
             
             // Format and set ping text
             val pingText = com.v2ray.ang.helper.WidgetPingTester.formatLatency(latency)

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/widget_background"
-    android:orientation="vertical"
     android:padding="12dp">
 
     <!-- Header: App Name and Status -->
@@ -197,9 +196,10 @@
             android:id="@+id/widget_btn_switch"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/widget_switch_server"
             android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_swap_24dp" />
 
         <ImageButton
@@ -211,16 +211,18 @@
             android:background="@drawable/widget_button_background"
             android:contentDescription="@string/widget_toggle_connection"
             android:padding="12dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_play_24dp" />
 
         <ImageButton
             android:id="@+id/widget_btn_open_app"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/widget_open_app"
             android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_open_in_new_24dp" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
