@@ -426,14 +426,13 @@ object V2RayServiceManager {
         
         val serviceCtrl = serviceControl?.get()
         if (isRunning() && serviceCtrl != null) {
-            // Restart service with new server
+            // Stop current server
             serviceCtrl.stopService()
             Thread.sleep(300L)
+            
+            // Start service with new server
+            // showNotification() and startSpeedNotification() will be called automatically in startCoreLoop()
             startVService(context, guid)
-             
-             // Update notification title only (keeps speed monitoring running)
-            val config = MmkvManager.decodeServerConfig(guid)
-            NotificationManager.updateNotificationTitle(config)
         }
     }
 }
