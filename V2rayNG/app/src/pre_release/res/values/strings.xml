@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">v2rayNG (PR)</string>
+    
+    <!-- Widget and Shortcuts -->
+<string name="widget_info_description">Display current server and traffic stats</string>
+<string name="widget_current_server">Current Server</string>
+<string name="widget_no_server_selected">No server selected</string>
+<string name="widget_ping">Ping</string>
+<string name="widget_switch_server">Switch Server</string>
+<string name="widget_toggle_connection">Toggle Connection</string>
+<string name="widget_open_app">Open App</string>
+<string name="widget_switched_to">Switched to</string>
+<string name="widget_status_connected">Connected</string>
+<string name="widget_status_disconnected">Disconnected</string>
+
+<!-- Notification Actions -->
+<string name="notification_action_stop_v2ray">Stop</string>
+<string name="notification_action_switch_next">Next</string>
+<string name="notification_action_switch_prev">Prev</string>
+
+<!-- App Shortcuts -->
+<string name="shortcut_toggle_short">Toggle</string>
+<string name="shortcut_toggle_long">Toggle Connection</string>
+<string name="shortcut_switch_next_short">Next</string>
+<string name="shortcut_switch_next_long">Switch to Next Server</string>
 </resources>

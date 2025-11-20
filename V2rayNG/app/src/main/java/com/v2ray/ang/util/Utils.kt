@@ -571,5 +571,21 @@ object Utils {
             return false
         }
     }
+    
+    /**
+     * Convert bytes to human readable format
+     * @param bytes The number of bytes
+     * @param si Use SI units (1000) or binary (1024)
+     * @return Formatted string (e.g., "1.5 MB")
+     */
+    fun humanReadableByteCount(bytes: Long, si: Boolean = false): String {
+        val unit = if (si) 1000 else 1024
+        if (bytes < unit) return "$bytes B"
+        
+        val exp = (Math.log(bytes.toDouble()) / Math.log(unit.toDouble())).toInt()
+        val pre = (if (si) "kMGTPE" else "KMGTPE")[exp - 1] + if (si) "" else "i"
+        
+        return String.format("%.1f %sB", bytes / Math.pow(unit.toDouble(), exp.toDouble()), pre)
+    }
 }
 

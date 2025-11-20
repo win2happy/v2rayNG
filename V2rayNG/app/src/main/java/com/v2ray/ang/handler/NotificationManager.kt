@@ -30,6 +30,8 @@ object NotificationManager {
     private const val NOTIFICATION_PENDING_INTENT_CONTENT = 0
     private const val NOTIFICATION_PENDING_INTENT_STOP_V2RAY = 1
     private const val NOTIFICATION_PENDING_INTENT_RESTART_V2RAY = 2
+    private const val NOTIFICATION_PENDING_INTENT_SWITCH_NEXT = 3
+    private const val NOTIFICATION_PENDING_INTENT_SWITCH_PREV = 4
     private const val NOTIFICATION_ICON_THRESHOLD = 3000
 
     private var lastQueryTime = 0L
@@ -108,6 +110,18 @@ object NotificationManager {
         restartV2RayIntent.`package` = AppConfig.ANG_PACKAGE
         restartV2RayIntent.putExtra("key", AppConfig.MSG_STATE_RESTART)
         val restartV2RayPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_RESTART_V2RAY, restartV2RayIntent, flags)
+        
+        // Switch to next server intent - use broadcast instead of activity
+        val switchNextIntent = Intent(AppConfig.BROADCAST_ACTION_SERVICE)
+        switchNextIntent.`package` = AppConfig.ANG_PACKAGE
+        switchNextIntent.putExtra("key", AppConfig.MSG_STATE_SWITCH_NEXT)
+        val switchNextPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_SWITCH_NEXT, switchNextIntent, flags)
+ 
+        // Switch to previous server intent - use broadcast instead of activity
+        val switchPrevIntent = Intent(AppConfig.BROADCAST_ACTION_SERVICE)
+        switchPrevIntent.`package` = AppConfig.ANG_PACKAGE
+        switchPrevIntent.putExtra("key", AppConfig.MSG_STATE_SWITCH_PREV)
+        val switchPrevPendingIntent = PendingIntent.getBroadcast(service, NOTIFICATION_PENDING_INTENT_SWITCH_PREV, switchPrevIntent, flags)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -127,14 +141,19 @@ object NotificationManager {
             .setOnlyAlertOnce(true)
             .setContentIntent(contentPendingIntent)
             .addAction(
+                R.drawable.ic_swap_24dp,
+                service.getString(R.string.notification_action_switch_prev),
+                switchPrevPendingIntent
+            )
+            .addAction(
                 R.drawable.ic_delete_24dp,
                 service.getString(R.string.notification_action_stop_v2ray),
                 stopV2RayPendingIntent
             )
             .addAction(
-                R.drawable.ic_delete_24dp,
-                service.getString(R.string.title_service_restart),
-                restartV2RayPendingIntent
+                R.drawable.ic_swap_24dp,
+                service.getString(R.string.notification_action_switch_next),
+                switchNextPendingIntent
             )
 
         //mBuilder?.setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
@@ -157,6 +176,18 @@ object NotificationManager {
         speedNotificationJob?.cancel()
         speedNotificationJob = null
         mNotificationManager = null
+    }
+    
+    /**
+      * Updates the notification title without recreating the entire notification.
+      * This allows speed monitoring to continue working after server switch.
+      * @param currentConfig The current profile configuration.
+    */
+    fun updateNotificationTitle(currentConfig: ProfileItem?) {
+        if (mBuilder != null) {
+            mBuilder?.setContentTitle(currentConfig?.remarks)
+            getNotificationManager()?.notify(NOTIFICATION_ID, mBuilder?.build())
+        }
     }
 
     /**
@@ -208,7 +239,24 @@ object NotificationManager {
             mBuilder?.setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             mBuilder?.setContentText(contentText)
             getNotificationManager()?.notify(NOTIFICATION_ID, mBuilder?.build())
+        
+            // Update widget with traffic data
+            updateWidgetTraffic(proxyTraffic, directTraffic)
         }
+    }
+    
+    /**
+     * Updates the widget with traffic data.
+     */
+    private fun updateWidgetTraffic(proxyTraffic: Long, directTraffic: Long) {
+        val service = getService() ?: return
+        val intent = Intent(service, com.v2ray.ang.receiver.InfoWidgetProvider::class.java)
+        intent.action = com.v2ray.ang.receiver.InfoWidgetProvider.ACTION_UPDATE_TRAFFIC
+        intent.putExtra("uploadSpeed", proxyTraffic)
+        intent.putExtra("downloadSpeed", directTraffic)
+        intent.putExtra("uploadTotal", proxyTraffic)
+        intent.putExtra("downloadTotal", directTraffic)
+        service.sendBroadcast(intent)
     }
 
     /**

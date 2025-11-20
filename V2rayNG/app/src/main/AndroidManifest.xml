@@ -151,6 +151,12 @@
             android:name=".ui.AboutActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.QuickSwitchActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar.Translucent" />
+            
         <service
             android:name=".service.V2RayVpnService"
             android:enabled="true"
@@ -196,6 +202,24 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="${applicationId}.action.widget.click" />
+                <action android:name="${applicationId}.action.activity" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver
+            android:name=".receiver.InfoWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_info_description">
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info_provider" />
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.v2ray.ang.action.TOGGLE_CONNECTION" />
+                <action android:name="com.v2ray.ang.action.SWITCH_SERVER" />
+                <action android:name="com.v2ray.ang.action.OPEN_APP" />
+                <action android:name="com.v2ray.ang.action.UPDATE_TRAFFIC" />
+                <action android:name="com.v2ray.ang.action.UPDATE_PING" />
                 <action android:name="${applicationId}.action.activity" />
             </intent-filter>
         </receiver>

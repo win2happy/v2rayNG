@@ -404,5 +404,27 @@
         <item>最稳定</item>
     </string-array>
     <string name="pre_resolving_domain">预解析域名中…</string>
+    
+    <!-- Widget and Shortcuts -->
+    <string name="widget_info_description">显示当前节点和流量统计</string>
+    <string name="widget_current_server">当前节点</string>
+    <string name="widget_no_server_selected">未选择节点</string>
+    <string name="widget_ping">延迟</string>
+    <string name="widget_switch_server">切换节点</string>
+    <string name="widget_toggle_connection">开关连接</string>
+    <string name="widget_open_app">打开应用</string>
+    <string name="widget_switched_to">已切换到</string>
+    <string name="widget_status_connected">已连接</string>
+    <string name="widget_status_disconnected">未连接</string>
+
+    <!-- Notification Actions -->
+    <string name="notification_action_switch_next">下一个</string>
+    <string name="notification_action_switch_prev">上一个</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcut_toggle_short">开关</string>
+    <string name="shortcut_toggle_long">开关连接</string>
+    <string name="shortcut_switch_next_short">下一个</string>
+    <string name="shortcut_switch_next_long">切换到下一个节点</string>
 
 </resources>
