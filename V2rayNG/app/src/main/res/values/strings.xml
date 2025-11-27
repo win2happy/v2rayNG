@@ -439,5 +439,30 @@
     <string name="shortcut_toggle_long">Toggle Connection</string>
     <string name="shortcut_switch_next_short">Next</string>
     <string name="shortcut_switch_next_long">Switch to Next Server</string>
+
+    <!-- Import Export -->
+    <string name="title_import_export">Import/Export</string>
+    <string name="import_export_backup_title">Backup</string>
+    <string name="import_export_backup_desc">Export configurations, subscriptions, and settings</string>
+    <string name="import_export_restore_title">Restore</string>
+    <string name="import_export_restore_desc">Import configurations from backup file</string>
+    <string name="import_export_export_all">Export All Data</string>
+    <string name="import_export_export_subscriptions">Export Subscriptions</string>
+    <string name="import_export_export_servers">Export Servers</string>
+    <string name="import_export_export_settings">Export Settings</string>
+    <string name="import_export_import_all">Import All Data</string>
+    <string name="import_export_import_subscriptions">Import Subscriptions</string>
+    <string name="import_export_import_servers">Import Servers</string>
+    <string name="import_export_import_settings">Import Settings</string>
+    <string name="import_export_export_success">Export successful: %s</string>
+    <string name="import_export_import_success">Import successful. Imported: %d subscriptions, %d servers, %d settings</string>
+    <string name="import_export_export_failed">Export failed</string>
+    <string name="import_export_import_failed">Import failed</string>
+    <string name="import_export_file_saved">File saved to: %s</string>
+    <string name="import_export_select_file">Please select a backup file</string>
+    <string name="import_export_confirm_import">Confirm import? This will merge with existing data.</string>
+    <string name="import_export_confirm_import_replace">Replace existing data? All current data will be deleted.</string>
+    <string name="import_export_merge">Merge</string>
+    <string name="import_export_replace">Replace</string>
     
 </resources>

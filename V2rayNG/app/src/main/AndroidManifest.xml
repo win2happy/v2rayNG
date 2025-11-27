@@ -106,6 +106,10 @@
             android:name=".ui.SubSettingActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.ImportExportActivity"
+            android:exported="false"
+            android:theme="@style/AppThemeDayNight.NoActionBar" />
+        <activity
             android:name=".ui.UserAssetActivity"
             android:exported="false" />
         <activity
@@ -289,6 +293,16 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/cache_paths" />
+        </provider>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
 
     </application>

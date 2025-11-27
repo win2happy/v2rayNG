@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_subscriptions_24dp"
             android:title="@string/title_sub_setting" />
         <item
+            android:id="@+id/import_export"
+            android:icon="@drawable/ic_backup_24dp"
+            android:title="@string/title_import_export" />
+        <item
             android:id="@+id/per_app_proxy_settings"
             android:icon="@drawable/ic_per_apps_24dp"
             android:title="@string/per_app_proxy_settings" />
