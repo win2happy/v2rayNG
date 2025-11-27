@@ -2,9 +2,10 @@ package com.v2ray.ang.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.v2ray.ang.R
 import com.v2ray.ang.databinding.ActivityImportExportBinding
 import com.v2ray.ang.extension.toast
@@ -87,7 +88,7 @@ class ImportExportActivity : BaseActivity() {
     }
 
     private fun exportData(type: ExportType) {
-        binding.pbWaiting.show()
+        binding.pbWaiting.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -117,7 +118,7 @@ class ImportExportActivity : BaseActivity() {
                 val file = BackupManager.saveBackupToFile(this@ImportExportActivity, backupData, filename)
 
                 withContext(Dispatchers.Main) {
-                    binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                     if (file != null) {
                         showExportSuccessDialog(file)
                     } else {
@@ -126,7 +127,7 @@ class ImportExportActivity : BaseActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                     toast(R.string.import_export_export_failed)
                 }
             }
@@ -134,7 +135,7 @@ class ImportExportActivity : BaseActivity() {
     }
 
     private fun showExportSuccessDialog(file: File) {
-        MaterialAlertDialogBuilder(this)
+        AlertDialog.Builder(this)
             .setTitle(R.string.toast_success)
             .setMessage(getString(R.string.import_export_file_saved, file.absolutePath))
             .setPositiveButton(android.R.string.ok, null)
@@ -162,7 +163,7 @@ class ImportExportActivity : BaseActivity() {
 
     private fun showImportDialog(type: ImportType) {
         if (type == ImportType.ALL) {
-            MaterialAlertDialogBuilder(this)
+            AlertDialog.Builder(this)
                 .setTitle(R.string.import_export_import_all)
                 .setMessage(R.string.import_export_confirm_import_replace)
                 .setPositiveButton(R.string.import_export_merge) { _, _ ->
@@ -174,7 +175,7 @@ class ImportExportActivity : BaseActivity() {
                 .setNeutralButton(android.R.string.cancel, null)
                 .show()
         } else {
-            MaterialAlertDialogBuilder(this)
+            AlertDialog.Builder(this)
                 .setTitle(when (type) {
                     ImportType.SUBSCRIPTIONS -> R.string.import_export_import_subscriptions
                     ImportType.SERVERS -> R.string.import_export_import_servers
@@ -204,14 +205,14 @@ class ImportExportActivity : BaseActivity() {
     private var currentImportReplace = false
 
     private fun handleImportFile(file: File) {
-        binding.pbWaiting.show()
+        binding.pbWaiting.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val backupData = BackupManager.loadBackupFromFile(file)
                 if (backupData == null) {
                     withContext(Dispatchers.Main) {
-                        binding.pbWaiting.hide()
+                        binding.pbWaiting.visibility = View.GONE
                         toast(R.string.import_export_import_failed)
                     }
                     return@launch
@@ -238,14 +239,14 @@ class ImportExportActivity : BaseActivity() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                     val message = getString(
                         R.string.import_export_import_success,
                         result.first,
                         result.second,
                         result.third
                     )
-                    MaterialAlertDialogBuilder(this@ImportExportActivity)
+                    AlertDialog.Builder(this@ImportExportActivity)
                         .setTitle(R.string.toast_success)
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok) { _, _ ->
@@ -256,7 +257,7 @@ class ImportExportActivity : BaseActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                     toast(R.string.import_export_import_failed)
                 }
             } finally {
