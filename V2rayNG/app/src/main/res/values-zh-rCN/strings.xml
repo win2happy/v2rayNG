@@ -427,28 +427,30 @@
     <string name="shortcut_toggle_long">开关连接</string>
     <string name="shortcut_switch_next_short">下一个</string>
     <string name="shortcut_switch_next_long">切换到下一个节点</string>
-    
+
     <!-- Import Export -->
-<string name="title_import_export">导入/导出</string>
-<string name="import_export_backup_title">备份与还原</string>
-<string name="import_export_backup_desc">导出或导入配置、订阅和设置</string>
-<string name="import_export_export_all">导出全部数据</string>
-<string name="import_export_export_subscriptions">导出订阅</string>
-<string name="import_export_export_servers">导出节点</string>
-<string name="import_export_export_settings">导出设置</string>
-<string name="import_export_import_all">导入全部数据</string>
-<string name="import_export_import_subscriptions">导入订阅</string>
-<string name="import_export_import_servers">导入节点</string>
-<string name="import_export_import_settings">导入设置</string>
-<string name="import_export_export_success">导出成功：%s</string>
-<string name="import_export_import_success">导入成功。已导入：%d 个订阅、%d 个节点、%d 项设置</string>
-<string name="import_export_export_failed">导出失败</string>
-<string name="import_export_import_failed">导入失败</string>
-<string name="import_export_file_saved">文件已保存到：%s</string>
-<string name="import_export_select_file">请选择备份文件</string>
-<string name="import_export_confirm_import">确认导入？这将与现有数据合并。</string>
-<string name="import_export_confirm_import_replace">确认替换现有数据？所有当前数据将被删除。</string>
-<string name="import_export_merge">合并</string>
-<string name="import_export_replace">替换</string>
+    <string name="title_import_export">导入/导出</string>
+    <string name="import_export_backup_title">备份</string>
+    <string name="import_export_backup_desc">导出配置、订阅和设置</string>
+    <string name="import_export_restore_title">还原</string>
+    <string name="import_export_restore_desc">从备份文件导入配置</string>
+    <string name="import_export_export_all">导出全部数据</string>
+    <string name="import_export_export_subscriptions">导出订阅</string>
+    <string name="import_export_export_servers">导出节点</string>
+    <string name="import_export_export_settings">导出设置</string>
+    <string name="import_export_import_all">导入全部数据</string>
+    <string name="import_export_import_subscriptions">导入订阅</string>
+    <string name="import_export_import_servers">导入节点</string>
+    <string name="import_export_import_settings">导入设置</string>
+    <string name="import_export_export_success">导出成功：%s</string>
+    <string name="import_export_import_success">导入成功。已导入：%d 个订阅、%d 个节点、%d 项设置</string>
+    <string name="import_export_export_failed">导出失败</string>
+    <string name="import_export_import_failed">导入失败</string>
+    <string name="import_export_file_saved">文件已保存到：%s</string>
+    <string name="import_export_select_file">请选择备份文件</string>
+    <string name="import_export_confirm_import">确认导入？这将与现有数据合并。</string>
+    <string name="import_export_confirm_import_replace">确认替换现有数据？所有当前数据将被删除。</string>
+    <string name="import_export_merge">合并</string>
+    <string name="import_export_replace">替换</string>
 
 </resources>

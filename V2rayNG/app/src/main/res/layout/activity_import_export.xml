@@ -26,25 +26,20 @@
             android:layout_height="match_parent"
             android:fillViewport="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Export Section -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <!-- Export Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_marginBottom="16dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -61,63 +56,65 @@
                         android:text="@string/import_export_backup_desc"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_export_all"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_export_all"
-                        app:icon="@drawable/ic_cloud_download_24dp"
-                        app:iconGravity="textStart" />
+                        android:drawableStart="@drawable/ic_cloud_download_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Colored" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_export_subscriptions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_export_subscriptions"
-                        app:icon="@drawable/ic_subscriptions_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_subscriptions_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_export_servers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_export_servers"
-                        app:icon="@drawable/ic_server_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_server_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_export_settings"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/import_export_export_settings"
-                        app:icon="@drawable/ic_settings_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_settings_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Import Section -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginBottom="16dp" />
 
+                <!-- Import Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="?attr/selectableItemBackground">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Import"
+                        android:text="@string/import_export_restore_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title"
                         android:textColor="?attr/colorPrimary" />
 
@@ -126,51 +123,51 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="16dp"
-                        android:text="Restore configurations from backup file"
+                        android:text="@string/import_export_restore_desc"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_import_all"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_import_all"
-                        app:icon="@drawable/ic_cloud_upload_24dp"
-                        app:iconGravity="textStart" />
+                        android:drawableStart="@drawable/ic_cloud_upload_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Colored" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_import_subscriptions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_import_subscriptions"
-                        app:icon="@drawable/ic_subscriptions_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_subscriptions_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_import_servers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="@string/import_export_import_servers"
-                        app:icon="@drawable/ic_server_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_server_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_import_settings"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/import_export_import_settings"
-                        app:icon="@drawable/ic_settings_24dp"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        android:drawableStart="@drawable/ic_settings_24dp"
+                        android:drawablePadding="8dp"
+                        style="@style/Widget.AppCompat.Button.Borderless" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 
