@@ -84,41 +84,52 @@ object BackupManager {
     fun exportSettings(): Map<String, Any> {
         val settings = mutableMapOf<String, Any>()
         
-        // Export common settings
-        val settingsKeys = listOf(
+        // String type settings
+        val stringKeys = listOf(
             AppConfig.PREF_MODE,
-            AppConfig.PREF_SPEED_ENABLED,
-            AppConfig.PREF_SNIFFING_ENABLED,
-            AppConfig.PREF_LOCAL_DNS_ENABLED,
-            AppConfig.PREF_FAKE_DNS_ENABLED,
             AppConfig.PREF_VPN_DNS,
             AppConfig.PREF_REMOTE_DNS,
             AppConfig.PREF_DOMESTIC_DNS,
             AppConfig.PREF_SOCKS_PORT,
             AppConfig.PREF_LOGLEVEL,
-            AppConfig.PREF_ALLOW_INSECURE,
-            AppConfig.PREF_MUX_ENABLED,
             AppConfig.PREF_MUX_CONCURRENCY,
-            AppConfig.PREF_PER_APP_PROXY,
-            AppConfig.PREF_BYPASS_APPS,
-            AppConfig.PREF_PREFER_IPV6,
             AppConfig.PREF_ROUTING_DOMAIN_STRATEGY,
-            AppConfig.PREF_CONFIRM_REMOVE,
-            AppConfig.PREF_START_SCAN_IMMEDIATE,
-            AppConfig.PREF_DOUBLE_COLUMN_DISPLAY,
-            AppConfig.PREF_PROXY_SHARING,
             AppConfig.PREF_LOCAL_DNS_PORT,
             AppConfig.PREF_VPN_MTU
         )
-
-        settingsKeys.forEach { key ->
-            val strValue = MmkvManager.decodeSettingsString(key)
-            if (strValue != null) {
-                settings[key] = strValue
-            } else {
-                val boolValue = MmkvManager.decodeSettingsBool(key, false)
-                settings[key] = boolValue
+        
+        stringKeys.forEach { key ->
+            val value = MmkvManager.decodeSettingsString(key)
+            if (value != null) {
+                settings[key] = value
             }
+        }
+        
+        // Boolean type settings
+        val boolKeys = listOf(
+            AppConfig.PREF_SPEED_ENABLED,
+            AppConfig.PREF_SNIFFING_ENABLED,
+            AppConfig.PREF_LOCAL_DNS_ENABLED,
+            AppConfig.PREF_FAKE_DNS_ENABLED,
+            AppConfig.PREF_ALLOW_INSECURE,
+            AppConfig.PREF_MUX_ENABLED,
+            AppConfig.PREF_PER_APP_PROXY,
+            AppConfig.PREF_PREFER_IPV6,
+            AppConfig.PREF_CONFIRM_REMOVE,
+            AppConfig.PREF_START_SCAN_IMMEDIATE,
+            AppConfig.PREF_DOUBLE_COLUMN_DISPLAY,
+            AppConfig.PREF_PROXY_SHARING
+        )
+        
+        boolKeys.forEach { key ->
+            // Always export boolean settings, even if false
+            settings[key] = MmkvManager.decodeSettingsBool(key, false)
+        }
+        
+        // Export string set settings
+        val bypassApps = MmkvManager.decodeSettingsStringSet(AppConfig.PREF_BYPASS_APPS)
+        if (bypassApps != null && bypassApps.isNotEmpty()) {
+            settings[AppConfig.PREF_BYPASS_APPS] = bypassApps.toList()
         }
 
         // Export routing rulesets
@@ -266,12 +277,32 @@ object BackupManager {
         try {
             settings?.forEach { (key, value) ->
                 when (value) {
-                    is String -> MmkvManager.encodeSettings(key, value)
-                    is Boolean -> MmkvManager.encodeSettings(key, value)
-                    is Int -> MmkvManager.encodeSettings(key, value)
-                    is Double -> MmkvManager.encodeSettings(key, value.toInt())
+                    is String -> {
+                        MmkvManager.encodeSettings(key, value)
+                        count++
+                    }
+                    is Boolean -> {
+                        MmkvManager.encodeSettings(key, value)
+                        count++
+                    }
+                    is Int -> {
+                        MmkvManager.encodeSettings(key, value)
+                        count++
+                    }
+                    is Double -> {
+                        MmkvManager.encodeSettings(key, value.toInt())
+                        count++
+                    }
+                    is List<*> -> {
+                        // Handle string set (bypass apps)
+                        @Suppress("UNCHECKED_CAST")
+                        val stringSet = (value as? List<String>)?.toMutableSet()
+                        if (stringSet != null) {
+                            MmkvManager.encodeSettings(key, stringSet)
+                            count++
+                        }
+                    }
                 }
-                count++
             }
         } catch (e: Exception) {
             Log.e(AppConfig.TAG, "Failed to import settings", e)
