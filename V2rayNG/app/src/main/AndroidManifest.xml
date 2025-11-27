@@ -107,7 +107,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.ImportExportActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppThemeDayNight.NoActionBar" />
         <activity
             android:name=".ui.UserAssetActivity"
             android:exported="false" />
@@ -293,7 +294,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/cache_paths" />
         </provider>
-        
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
