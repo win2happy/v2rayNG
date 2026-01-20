@@ -3,9 +3,7 @@ package com.v2ray.ang.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
-import androidx.annotation.RequiresApi
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.V2RayServiceManager
 import com.v2ray.ang.util.MyContextWrapper
@@ -28,7 +26,7 @@ class V2RayProxyOnlyService : Service(), ServiceControl {
      * @return The start mode.
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        V2RayServiceManager.startCoreLoop()
+        V2RayServiceManager.startCoreLoop(null)
         return START_STICKY
     }
 
@@ -84,7 +82,6 @@ class V2RayProxyOnlyService : Service(), ServiceControl {
      * Attaches the base context to the service.
      * @param newBase The new base context.
      */
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun attachBaseContext(newBase: Context?) {
         val context = newBase?.let {
             MyContextWrapper.wrap(newBase, SettingsManager.getLocale())

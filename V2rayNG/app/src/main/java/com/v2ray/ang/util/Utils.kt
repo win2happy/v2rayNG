@@ -25,6 +25,8 @@ import java.net.ServerSocket
 import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
@@ -374,24 +376,6 @@ object Utils {
     }
 
     /**
-     * Get the path to the backup directory.
-     *
-     * @param context The context to use.
-     * @return The path to the backup directory.
-     */
-    fun backupPath(context: Context?): String {
-        if (context == null) return ""
-
-        return try {
-            context.getExternalFilesDir(AppConfig.DIR_BACKUPS)?.absolutePath
-                ?: context.getDir(AppConfig.DIR_BACKUPS, 0).absolutePath
-        } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to get backup path", e)
-            ""
-        }
-    }
-
-    /**
      * Get the device ID for XUDP base key.
      *
      * @return The device ID for XUDP base key.
@@ -437,11 +421,7 @@ object Utils {
      *
      * @return The system locale.
      */
-    fun getSysLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        LocaleList.getDefault()[0]
-    } else {
-        Locale.getDefault()
-    }
+    fun getSysLocale(): Locale = LocaleList.getDefault().get(0) ?: Locale.getDefault()
 
     /**
      * Fix illegal characters in a URL.
@@ -571,5 +551,21 @@ object Utils {
             return false
         }
     }
-}
 
+    /**
+     * Format a timestamp (milliseconds since epoch) into a date string.
+     * Returns empty string for null or non-positive timestamps.
+     * @param ts timestamp in milliseconds or null
+     * @param pattern SimpleDateFormat pattern, default "yyyy-MM-dd HH:mm"
+     */
+    fun formatTimestamp(ts: Long?, pattern: String = "yyyy-MM-dd HH:mm", locale: Locale = Locale.getDefault()): String {
+        if (ts == null || ts <= 0L) return ""
+        return try {
+            val sdf = SimpleDateFormat(pattern, locale)
+            sdf.format(Date(ts))
+        } catch (e: Exception) {
+            Log.e(AppConfig.TAG, "Failed to format timestamp", e)
+            ""
+        }
+    }
+}

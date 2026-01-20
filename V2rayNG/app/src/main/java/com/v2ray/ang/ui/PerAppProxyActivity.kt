@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.v2ray.ang.AppConfig
@@ -18,10 +19,12 @@ import com.v2ray.ang.extension.toast
 import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.extension.v2RayApplication
 import com.v2ray.ang.handler.MmkvManager
+import com.v2ray.ang.handler.SettingsChangeManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.util.AppManagerUtil
 import com.v2ray.ang.util.HttpUtil
 import com.v2ray.ang.util.Utils
+import com.v2ray.ang.viewmodel.PerAppProxyViewModel
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,12 +36,12 @@ class PerAppProxyActivity : BaseActivity() {
 
     private var adapter: PerAppProxyAdapter? = null
     private var appsAll: List<AppInfo>? = null
+    private val viewModel: PerAppProxyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-        title = getString(R.string.per_app_proxy_settings)
+        //setContentView(binding.root)
+        setContentViewWithToolbar(binding.root, showHomeAsUp = true, title = getString(R.string.per_app_proxy_settings))
 
         addCustomDividerToRecyclerView(binding.recyclerView, this, R.drawable.custom_divider)
 
@@ -60,18 +63,17 @@ class PerAppProxyActivity : BaseActivity() {
     }
 
     private fun initList() {
-        binding.pbWaiting.show()
+        showLoading()
 
         lifecycleScope.launch {
             try {
-                val blacklist =
-                    MmkvManager.decodeSettingsStringSet(AppConfig.PREF_PER_APP_PROXY_SET)
                 val apps = withContext(Dispatchers.IO) {
                     val appsList = AppManagerUtil.loadNetworkAppList(this@PerAppProxyActivity)
 
-                    if (blacklist != null) {
+                    val blacklistSet = viewModel.getAll()
+                    if (blacklistSet.isNotEmpty()) {
                         appsList.forEach { app ->
-                            app.isSelected = if (blacklist.contains(app.packageName)) 1 else 0
+                            app.isSelected = if (blacklistSet.contains(app.packageName)) 1 else 0
                         }
                         appsList.sortedWith { p1, p2 ->
                             when {
@@ -93,20 +95,14 @@ class PerAppProxyActivity : BaseActivity() {
                 }
 
                 appsAll = apps
-                adapter = PerAppProxyAdapter(this@PerAppProxyActivity, apps, blacklist)
+                adapter = PerAppProxyAdapter(this@PerAppProxyActivity, apps, viewModel)
                 binding.recyclerView.adapter = adapter
+
             } catch (e: Exception) {
                 Log.e(ANG_PACKAGE, "Error loading apps", e)
             } finally {
-                binding.pbWaiting.hide()
+                hideLoading()
             }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        adapter?.let {
-            MmkvManager.encodeSettings(AppConfig.PREF_PER_APP_PROXY_SET, it.blacklist)
         }
     }
 
@@ -137,6 +133,11 @@ class PerAppProxyActivity : BaseActivity() {
             allowPerAppProxy()
             true
         }
+        R.id.invert_selection -> {
+            invertSelection()
+            allowPerAppProxy()
+            true
+        }
 
         R.id.select_proxy_app -> {
             selectProxyAppAuto()
@@ -159,27 +160,31 @@ class PerAppProxyActivity : BaseActivity() {
     }
 
     private fun selectAllApp() {
-        adapter?.let { it ->
-            val pkgNames = it.apps.map { it.packageName }
-            if (it.blacklist.containsAll(pkgNames)) {
-                it.apps.forEach {
-                    val packageName = it.packageName
-                    adapter?.blacklist?.remove(packageName)
-                }
+        adapter?.let { adapter ->
+            val pkgNames = adapter.apps.map { it.packageName }
+            val allSelected = pkgNames.all { viewModel.contains(it) }
+
+            if (allSelected) {
+                viewModel.removeAll(pkgNames)
             } else {
-                it.apps.forEach {
-                    val packageName = it.packageName
-                    adapter?.blacklist?.add(packageName)
-                }
+                viewModel.addAll(pkgNames)
             }
-            it.notifyDataSetChanged()
-            true
+            refreshData()
+        }
+    }
+
+    private fun invertSelection() {
+        adapter?.let { adapter ->
+            adapter.apps.forEach { app ->
+                viewModel.toggle(app.packageName)
+            }
+            refreshData()
         }
     }
 
     private fun selectProxyAppAuto() {
         toast(R.string.msg_downloading_content)
-        binding.pbWaiting.show()
+        showLoading()
 
         val url = AppConfig.ANDROID_PACKAGE_NAME_LIST_URL
         lifecycleScope.launch(Dispatchers.IO) {
@@ -189,10 +194,10 @@ class PerAppProxyActivity : BaseActivity() {
                 content = HttpUtil.getUrlContent(url, 5000, httpPort) ?: ""
             }
             launch(Dispatchers.Main) {
-                Log.i(AppConfig.TAG, content)
+                //Log.i(AppConfig.TAG, content)
                 selectProxyApp(content, true)
                 toastSuccess(R.string.toast_success)
-                binding.pbWaiting.hide()
+                hideLoading()
             }
         }
     }
@@ -207,8 +212,8 @@ class PerAppProxyActivity : BaseActivity() {
     private fun exportProxyApp() {
         var lst = binding.switchBypassApps.isChecked.toString()
 
-        adapter?.blacklist?.forEach block@{
-            lst = lst + System.getProperty("line.separator") + it
+        viewModel.getAll().forEach { pkg ->
+            lst = lst + System.lineSeparator() + pkg
         }
         Utils.setClipboard(applicationContext, lst)
         toastSuccess(R.string.toast_success)
@@ -216,45 +221,40 @@ class PerAppProxyActivity : BaseActivity() {
 
     private fun allowPerAppProxy() {
         binding.switchPerAppProxy.isChecked = true
+        SettingsChangeManager.makeRestartService()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun selectProxyApp(content: String, force: Boolean): Boolean {
         try {
             val proxyApps = if (TextUtils.isEmpty(content)) {
-                Utils.readTextFromAssets(v2RayApplication, "proxy_packagename.txt")
+                Utils.readTextFromAssets(v2RayApplication, "proxy_package_name")
             } else {
                 content
             }
             if (TextUtils.isEmpty(proxyApps)) return false
 
-            adapter?.blacklist?.clear()
+            viewModel.clear()
 
             if (binding.switchBypassApps.isChecked) {
-                adapter?.let { it ->
-                    it.apps.forEach block@{
-                        val packageName = it.packageName
-                        Log.i(AppConfig.TAG, packageName)
+                adapter?.let { adapter ->
+                    adapter.apps.forEach { app ->
+                        val packageName = app.packageName
                         if (!inProxyApps(proxyApps, packageName, force)) {
-                            adapter?.blacklist?.add(packageName)
-                            println(packageName)
-                            return@block
+                            viewModel.add(packageName)
                         }
                     }
-                    it.notifyDataSetChanged()
+                    refreshData()
                 }
             } else {
-                adapter?.let { it ->
-                    it.apps.forEach block@{
-                        val packageName = it.packageName
-                        Log.i(AppConfig.TAG, packageName)
+                adapter?.let { adapter ->
+                    adapter.apps.forEach { app ->
+                        val packageName = app.packageName
                         if (inProxyApps(proxyApps, packageName, force)) {
-                            adapter?.blacklist?.add(packageName)
-                            println(packageName)
-                            return@block
+                            viewModel.add(packageName)
                         }
                     }
-                    it.notifyDataSetChanged()
+                    refreshData()
                 }
             }
         } catch (e: Exception) {
@@ -265,6 +265,7 @@ class PerAppProxyActivity : BaseActivity() {
     }
 
     private fun inProxyApps(proxyApps: String, packageName: String, force: Boolean): Boolean {
+        println(packageName)
         if (force) {
             if (packageName == "com.google.android.webview") return false
             if (packageName.startsWith("com.google")) return true
@@ -291,7 +292,7 @@ class PerAppProxyActivity : BaseActivity() {
             }
         }
 
-        adapter = PerAppProxyAdapter(this, apps, adapter?.blacklist)
+        adapter = PerAppProxyAdapter(this, apps, adapter?.viewModel ?: viewModel)
         binding.recyclerView.adapter = adapter
         refreshData()
         return true

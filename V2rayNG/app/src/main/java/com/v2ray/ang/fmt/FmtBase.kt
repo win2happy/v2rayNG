@@ -82,6 +82,7 @@ open class FmtBase {
         config.sni = queryParam["sni"]
         config.fingerPrint = queryParam["fp"]
         config.alpn = queryParam["alpn"]
+        config.echConfigList = queryParam["ech"]
         config.publicKey = queryParam["pbk"]
         config.shortId = queryParam["sid"]
         config.spiderX = queryParam["spx"]
@@ -100,6 +101,7 @@ open class FmtBase {
         dicQuery["security"] = config.security?.ifEmpty { "none" }.orEmpty()
         config.sni.let { if (it.isNotNullEmpty()) dicQuery["sni"] = it.orEmpty() }
         config.alpn.let { if (it.isNotNullEmpty()) dicQuery["alpn"] = it.orEmpty() }
+        config.echConfigList.let { if (it.isNotNullEmpty()) dicQuery["ech"] = it.orEmpty() }
         config.fingerPrint.let { if (it.isNotNullEmpty()) dicQuery["fp"] = it.orEmpty() }
         config.publicKey.let { if (it.isNotNullEmpty()) dicQuery["pbk"] = it.orEmpty() }
         config.shortId.let { if (it.isNotNullEmpty()) dicQuery["sid"] = it.orEmpty() }
@@ -156,6 +158,8 @@ open class FmtBase {
                 config.authority.let { if (it.isNotNullEmpty()) dicQuery["authority"] = it.orEmpty() }
                 config.serviceName.let { if (it.isNotNullEmpty()) dicQuery["serviceName"] = it.orEmpty() }
             }
+
+            else -> {}
         }
 
         return dicQuery

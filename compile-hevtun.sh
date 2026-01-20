@@ -7,8 +7,8 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 if [[ ! -d $NDK_HOME ]]; then
-	echo "Android NDK: NDK_HOME not found. please set env \$NDK_HOME"
-	exit 1
+  echo "Android NDK: NDK_HOME not found. please set env \$NDK_HOME"
+  exit 1
 fi
 TMPDIR=$(mktemp -d)
 clear_tmp () {
@@ -27,13 +27,14 @@ ln -s "$__dir/hev-socks5-tunnel" jni/hev-socks5-tunnel
 "$NDK_HOME/ndk-build" \
     NDK_PROJECT_PATH=. \
     APP_BUILD_SCRIPT=jni/Android.mk \
-	"APP_ABI=armeabi-v7a arm64-v8a x86 x86_64" \
-	APP_PLATFORM=android-21 \
+    "APP_ABI=armeabi-v7a arm64-v8a x86 x86_64" \
+    APP_PLATFORM=android-24 \
     NDK_LIBS_OUT="$TMPDIR/libs" \
     NDK_OUT="$TMPDIR/obj" \
     "APP_CFLAGS=-O3 -DPKGNAME=com/v2ray/ang/service" \
     "APP_LDFLAGS=-Wl,--build-id=none -Wl,--hash-style=gnu" \
 
+mkdir -p "$__dir/libs"
 cp -r "$TMPDIR/libs/"* "$__dir/libs/"
 
 popd
